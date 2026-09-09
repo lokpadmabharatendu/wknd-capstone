@@ -15,7 +15,8 @@
         {
           "name": "cards",
           "instances": [
-            "section.experiencefragment.cmp-experience-fragment--contributor"
+            "section.experiencefragment.cmp-experience-fragment--contributor",
+            ".image-list.list"
           ]
         }
       ],

@@ -16,7 +16,10 @@ const PAGE_TEMPLATE = {
     'https://wknd.site/us/en/about-us.html',
   ],
   blocks: [
-    { name: 'cards', instances: ['section.experiencefragment.cmp-experience-fragment--contributor'] },
+    // Two card sources on landing pages: about-us uses contributor experience
+    // fragments; the magazine listing uses an image-list ("All Articles" grid).
+    // cards.js parseImageList handles the image-list branch.
+    { name: 'cards', instances: ['section.experiencefragment.cmp-experience-fragment--contributor', '.image-list.list'] },
   ],
   sections: [
     { id: 's1', name: 'landing-body', selector: 'main.cmp-layout-container--fixed', style: null, blocks: ['cards'], defaultContent: ['.cmp-title__text', '.cmp-text'] },
