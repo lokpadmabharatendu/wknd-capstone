@@ -24,6 +24,7 @@
   width: 100%;
   aspect-ratio: 1440 / 640;
   object-fit: cover;
+  object-position: 50% 100%; /* source anchors the hero image to the bottom */
 }
 
 /* Row 2: white content box, pulled up over the image bottom and centered. */

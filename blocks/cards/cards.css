@@ -69,6 +69,11 @@
   font-weight: 400;
   line-height: 21px;
   color: rgb(105 105 105);
+
+  /* source truncates the description to a single line with an ellipsis */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Responsive: 2-up on tablet, 4-up on desktop (source is 4-up flex-wrap) */
