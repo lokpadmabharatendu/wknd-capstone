@@ -1,12 +1,24 @@
+/*
+ * columns block — side-by-side layout.
+ * Styled to the WKND "featured article" teaser: image on one side, a text
+ * panel (pretitle + heading + description + CTA) on the other.
+ * Values extracted from https://wknd.site/us/en.html computed styles.
+ * The grey panel background is a SECTION concern (.section.grey in styles.css),
+ * not hardcoded here, so the block stays reusable.
+ */
+
+/* ---- base / mobile-first: stacked ---- */
 .columns > div {
   display: flex;
   flex-direction: column;
 }
 
 .columns img {
+  display: block;
   width: 100%;
 }
 
+/* text column below, image column on top (image gets order 0) */
 .columns > div > div {
   order: 1;
 }
@@ -16,18 +28,101 @@
 }
 
 .columns > div > .columns-img-col img {
-  display: block;
+  object-fit: cover;
 }
 
+/* text panel padding (36px extracted from source content padding) */
+.columns > div > div:not(.columns-img-col) {
+  padding: 36px;
+}
+
+/* description paragraph(s) — 14px body copy */
+.columns > div > div:not(.columns-img-col) p {
+  margin: 0;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24.5px;
+  color: var(--text-color);
+}
+
+/* pretitle — the first paragraph in the text cell ("Featured Article") */
+.columns > div > div:not(.columns-img-col) p:first-child {
+  margin: 0 0 13.5px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 45px;
+}
+
+/* heading */
+.columns h2 {
+  margin: 18px 0;
+  font-family: var(--heading-font-family);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 54px;
+  color: var(--text-color);
+}
+
+/* CTA — the standalone-link paragraph (its only child is the link) renders as
+ * the yellow "FULL ARTICLE" button. Scoped with :has() so inline links inside
+ * the description are left untouched. Works whether or not EDS buttonizes it. */
+.columns > div > div:not(.columns-img-col) p:has(> a:only-child) {
+  margin: 18px 0;
+}
+
+main .columns > div > div:not(.columns-img-col) p:has(> a:only-child) a:any-link,
+main .columns > div > div:not(.columns-img-col) a.button:any-link {
+  display: inline-block;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 14px 35px;
+  background-color: #ffea00;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+main .columns > div > div:not(.columns-img-col) p:has(> a:only-child) a:any-link:hover,
+main .columns > div > div:not(.columns-img-col) p:has(> a:only-child) a:any-link:focus-visible,
+main .columns > div > div:not(.columns-img-col) a.button:any-link:hover,
+main .columns > div > div:not(.columns-img-col) a.button:any-link:focus-visible {
+  background-color: #ffea00;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+/* ---- desktop: side-by-side, image wider ---- */
 @media (width >= 900px) {
   .columns > div {
-    align-items: center;
-    flex-direction: unset;
-    gap: 24px;
+    flex-direction: row;
+    align-items: stretch;
   }
 
   .columns > div > div {
-    flex: 1;
+    flex: 1 1 0%;
     order: unset;
+  }
+
+  /* image column is the larger of the two (source: image ~62%, text ~38%) */
+  .columns > div > .columns-img-col {
+    flex: 2 1 0%;
+    order: 0;
+  }
+
+  .columns > div > div:not(.columns-img-col) {
+    order: 1;
+    padding: 63px 36px 36px;
+  }
+
+  /* image fills the column height so both columns are flush and equal-height */
+  .columns > div > .columns-img-col img {
+    height: 100%;
   }
 }

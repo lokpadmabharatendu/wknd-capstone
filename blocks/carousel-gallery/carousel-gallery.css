@@ -1,0 +1,156 @@
+/* Block: carousel-gallery
+ * Full-width image gallery migrated from wknd.site (.cmp-carousel--mini).
+ * Source: edge-to-edge cropped image (1280x400 => 16/5 aspect), object-fit cover,
+ * centered dark dot indicators (10px, rgba(0,0,0,.8)) and small chevron arrows below.
+ */
+
+/* Break the gallery out to full width (source is edge-to-edge).
+ * The .section is already full viewport width; only the wrapper div carries
+ * the 1200px max-width + padding from styles.css, so override it here.
+ * Higher specificity than `main > .section > div`. */
+main .section .carousel-gallery-wrapper {
+  max-width: none;
+  padding: 0;
+}
+
+.carousel-gallery .carousel-gallery-slides-container {
+  position: relative;
+}
+
+.carousel-gallery .carousel-gallery-slides,
+.carousel-gallery .carousel-gallery-slide-indicators {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.carousel-gallery .carousel-gallery-slides {
+  display: flex;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overflow: scroll clip;
+}
+
+.carousel-gallery .carousel-gallery-slides::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-gallery .carousel-gallery-slide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  aspect-ratio: 16 / 5; /* source 1280x400 cropped strip */
+  scroll-snap-align: start;
+}
+
+/* Image fills the slide, cropped via object-fit cover (matches source). */
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image {
+  position: absolute;
+  inset: 0;
+}
+
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image picture > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Source has no text overlay; hide the empty content cell entirely. */
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content:empty {
+  display: none;
+}
+
+/* When authored with content, render a readable overlay box. */
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content:not(:empty) {
+  position: relative;
+  z-index: 1;
+  margin: 32px;
+  padding: 16px;
+  background-color: rgb(0 0 0 / 55%);
+  color: #fff;
+}
+
+/* Slide indicators (dots) — source: centered, 10px, rgba(0,0,0,.8), 14px gap, 9px above. */
+.carousel-gallery .carousel-gallery-slide-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin: 9px 0 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.carousel-gallery .carousel-gallery-slide-indicator button {
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: rgb(0 0 0 / 40%);
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.carousel-gallery .carousel-gallery-slide-indicator button:disabled,
+.carousel-gallery .carousel-gallery-slide-indicator button:hover,
+.carousel-gallery .carousel-gallery-slide-indicator button:focus-visible {
+  background-color: rgb(0 0 0 / 80%);
+}
+
+/* Navigation arrows — source: small dark chevrons (26x24) next to the dots. */
+.carousel-gallery .carousel-gallery-navigation-buttons {
+  position: absolute;
+  bottom: -34px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 1;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.carousel-gallery .carousel-gallery-navigation-buttons button {
+  position: relative;
+  width: 26px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  color: rgb(0 0 0);
+  cursor: pointer;
+}
+
+.carousel-gallery .carousel-gallery-navigation-buttons button::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 2px);
+  width: 9px;
+  height: 9px;
+  border: 2px solid currentcolor;
+  border-bottom: 0;
+  border-left: 0;
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+.carousel-gallery .carousel-gallery-navigation-buttons button.slide-next::after {
+  left: calc(50% - 2px);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+@media (width >= 900px) {
+  .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content:not(:empty) {
+    margin: 68px;
+    max-width: calc((100% - 184px) / 2);
+  }
+}

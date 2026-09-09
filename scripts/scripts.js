@@ -10,6 +10,9 @@ import {
   loadSections,
   loadCSS,
   buildBlock,
+  readBlockConfig,
+  toClassName,
+  toCamelCase,
 } from './aem.js';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
@@ -146,11 +149,38 @@ function decorateButtons(main) {
  * Decorates the main element.
  * @param {Element} main The main element
  */
+/**
+ * Applies Section Metadata to its parent section as classes/CSS vars, then
+ * removes the metadata block. The vendored aem.js decorateSections does not
+ * process section-metadata, so this restores the standard EDS behavior
+ * (e.g. a "style: grey" row adds the `grey` class → styles.css `.section.grey`).
+ * @param {Element} main The container element
+ */
+function decorateSectionMetadata(main) {
+  main.querySelectorAll(':scope > .section .section-metadata').forEach((metaBlock) => {
+    const section = metaBlock.closest('.section');
+    const meta = readBlockConfig(metaBlock);
+    Object.keys(meta).forEach((key) => {
+      if (key === 'style') {
+        const styles = meta.style
+          .split(',')
+          .map((style) => toClassName(style.trim()))
+          .filter((style) => style);
+        styles.forEach((style) => section.classList.add(style));
+      } else {
+        section.dataset[toCamelCase(key)] = meta[key];
+      }
+    });
+    metaBlock.parentElement.remove(); // remove the wrapper div holding the metadata block
+  });
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  decorateSectionMetadata(main);
   decorateBlocks(main);
   decorateButtons(main);
 }

@@ -1,0 +1,51 @@
+/*
+ * table-specs block
+ * Stacked label/value specification list.
+ * Values extracted from wknd.site computed styles (.cmp-contentfragment__elements).
+ */
+
+.table-specs {
+  margin: 18px 0;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+}
+
+.table-specs .table-specs-list {
+  margin: 0;
+  padding: 0;
+}
+
+/* one spec = label stacked above value, with a light left accent stripe */
+.table-specs .table-specs-spec {
+  margin: 0 0 22.5px;
+  padding: 0 18px;
+  border-left: 5px solid #ebebeb;
+}
+
+.table-specs .table-specs-spec:last-child {
+  margin-bottom: 0;
+}
+
+.table-specs .table-specs-label {
+  margin: 0;
+  padding: 12px 0 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgb(105 105 105);
+  text-transform: uppercase;
+}
+
+.table-specs .table-specs-value {
+  margin: 0;
+  padding: 7px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-color);
+  text-transform: uppercase;
+}
+
+.table-specs .table-specs-value p {
+  margin: 0;
+}

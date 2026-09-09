@@ -1,0 +1,37 @@
+{
+  "variantName": "tabs-listing",
+  "baseBlock": "tabs",
+  "version": "1.0.0",
+  "created": "2026-09-08T21:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/adventures.html",
+    "originPage": "adventure category listing page",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "listing-tabs",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "tab label + card-grid panel per row; each panel is a responsive multi-up grid of image + title + description cards",
+    "buttonCount": 0,
+    "imageCount": 32
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "category/listing pages that filter a card grid via tabs (e.g. adventures by activity)",
+      "any tabbed switcher whose panels contain repeating card grids"
+    ],
+    "notSuitableFor": [
+      "tabbed prose/detail content with paragraphs, images and bullet lists (use tabs-detail)",
+      "collapsible FAQ style content (use accordion)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/adventures"],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-08T21:00:00.000Z"
+  }
+}

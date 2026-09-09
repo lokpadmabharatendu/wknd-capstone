@@ -1,27 +1,85 @@
+/* Block: cards -- styled to match WKND image-list card grid */
+
+/* Source: div.image-list.list > ul.cmp-image-list (flex wrap) > li.cmp-image-list__item */
+
+/* Decorated EDS DOM: .cards > ul > li > (.cards-card-image + .cards-card-body) */
+
 .cards > ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 32px 14px;
 }
 
+/* WKND cards are flat: no border, no background, no shadow, no radius */
 .cards > ul > li {
-  border: 1px solid #dadada;
-  background-color: var(--background-color);
-}
-
-.cards .cards-card-body {
-  margin: 16px;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .cards .cards-card-image {
   line-height: 0;
 }
 
-.cards > ul > li img {
+/* Image: 260x200 in source -> aspect-ratio 13/10, cover, square corners */
+.cards .cards-card-image img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 13 / 10;
   object-fit: cover;
+  border-radius: 0;
+}
+
+.cards .cards-card-body {
+  margin: 0;
+}
+
+/* Title: span.cmp-image-list__item-title in source -> h3 (with link) in EDS.
+   18px, weight 600, body font, uppercase, #202020, line-height 27px */
+.cards .cards-card-body h3 {
+  margin: 12px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 27px;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+.cards .cards-card-body h3 a:any-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.cards .cards-card-body h3 a:hover {
+  text-decoration: none;
+  color: var(--link-color);
+}
+
+/* Description: 14px, weight 400, body font, line-height 21px, #696969, margin-top 16px */
+.cards .cards-card-body p {
+  margin: 16px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgb(105 105 105);
+}
+
+/* Responsive: 2-up on tablet, 4-up on desktop (source is 4-up flex-wrap) */
+@media (width >= 600px) {
+  .cards > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .cards > ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
