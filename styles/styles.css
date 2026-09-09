@@ -285,9 +285,65 @@ main img {
   width: 100%;
 }
 
+/* WKND CTA button — solid yellow square (matches wknd.site "All Articles",
+   "All Trips", etc.). Not the global rounded pill. */
+.wknd-cta-wrapper {
+  margin: 24px 0;
+}
+
+a.wknd-cta:any-link {
+  display: inline-block;
+  padding: 14px 35px;
+  background-color: #ffea00; /* WKND accent yellow — not a brand token */
+  border-radius: 0;
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+a.wknd-cta:any-link:hover {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
 /* sections */
 main > .section {
   margin: 40px 0;
+}
+
+/* Thin separator rule between stacked default-content sections, inset to the
+   content width (matches wknd.site section dividers). */
+main > .section + .section:not(.grey, .dark, .light, .highlight)::before {
+  content: '';
+  display: block;
+  width: calc(100% - 48px);
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  border-top: 1px solid #e6e6e6;
+}
+
+/* Trailing separator below the final content section (matches wknd.site's
+   rule above the footer). */
+main > .section:last-of-type::after {
+  content: '';
+  display: block;
+  width: calc(100% - 48px);
+  max-width: 1200px;
+  margin: 40px auto 0;
+  border-top: 1px solid #e6e6e6;
+}
+
+@media (width >= 900px) {
+  main > .section + .section:not(.grey, .dark, .light, .highlight)::before {
+    width: calc(100% - 64px);
+  }
+
+  main > .section:last-of-type::after {
+    width: calc(100% - 64px);
+  }
 }
 
 main > .section > div {
