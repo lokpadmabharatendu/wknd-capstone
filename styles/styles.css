@@ -73,8 +73,12 @@ body.appear {
   display: block;
 }
 
+/* Let the header size to its own content (the WKND nav is taller than the
+   default --nav-height, and shrinks on scroll). A fixed height clipped the
+   layout box to 64px while the nav painted 194px over the page's first
+   content — hiding the H1 on default-content pages. */
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
 }
 
 header .header,

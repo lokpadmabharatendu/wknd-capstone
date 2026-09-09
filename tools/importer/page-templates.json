@@ -13,6 +13,18 @@
       "description": "General landing page: hero banner above a cards grid with supporting default content sections",
       "blocks": [
         {
+          "name": "columns",
+          "instances": [
+            ".teaser.cmp-teaser--featured"
+          ]
+        },
+        {
+          "name": "secure-teasers",
+          "instances": [
+            ".teaser.cmp-teaser--list.cmp-teaser--secure"
+          ]
+        },
+        {
           "name": "cards",
           "instances": [
             "section.experiencefragment.cmp-experience-fragment--contributor",
@@ -27,11 +39,33 @@
           "selector": "main.cmp-layout-container--fixed",
           "style": null,
           "blocks": [
+            "columns",
+            "secure-teasers",
             "cards"
           ],
           "defaultContent": [
             ".cmp-title__text",
             ".cmp-text"
+          ]
+        },
+        {
+          "id": "s2",
+          "name": "featured-article",
+          "selector": ".teaser.cmp-teaser--featured",
+          "style": "grey",
+          "blocks": [
+            "columns"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "s3",
+          "name": "all-articles",
+          "selector": ".title.cmp-title--underline",
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            ".cmp-title__text"
           ]
         }
       ]

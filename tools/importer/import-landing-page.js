@@ -3,6 +3,8 @@
 
 // PARSER IMPORTS
 import cardsParser from './parsers/cards.js';
+import columnsParser from './parsers/columns.js';
+import secureTeasersParser from './parsers/secure-teasers.js';
 
 // TRANSFORMER IMPORTS
 import wkndCleanupTransformer from './transformers/wknd-cleanup.js';
@@ -16,19 +18,32 @@ const PAGE_TEMPLATE = {
     'https://wknd.site/us/en/about-us.html',
   ],
   blocks: [
+    // Featured Article teaser (magazine listing) → columns block: image-left,
+    // text-right in a grey panel (same treatment as the homepage featured teaser).
+    { name: 'columns', instances: ['.teaser.cmp-teaser--featured'] },
+    // Members Only "secure" teasers (magazine listing) → a single 2-up columns
+    // block built by the secure-teasers parser from the sibling group.
+    { name: 'secure-teasers', instances: ['.teaser.cmp-teaser--list.cmp-teaser--secure'] },
     // Two card sources on landing pages: about-us uses contributor experience
     // fragments; the magazine listing uses an image-list ("All Articles" grid).
     // cards.js parseImageList handles the image-list branch.
     { name: 'cards', instances: ['section.experiencefragment.cmp-experience-fragment--contributor', '.image-list.list'] },
   ],
   sections: [
-    { id: 's1', name: 'landing-body', selector: 'main.cmp-layout-container--fixed', style: null, blocks: ['cards'], defaultContent: ['.cmp-title__text', '.cmp-text'] },
+    { id: 's1', name: 'landing-body', selector: 'main.cmp-layout-container--fixed', style: null, blocks: ['columns', 'secure-teasers', 'cards'], defaultContent: ['.cmp-title__text', '.cmp-text'] },
+    // Grey panel behind the Featured Article teaser (matches the source + homepage).
+    { id: 's2', name: 'featured-article', selector: '.teaser.cmp-teaser--featured', style: 'grey', blocks: ['columns'], defaultContent: [] },
+    // Plain section starting at "All Articles" — closes the grey featured panel
+    // so the article grid + Members Only render on the default white background.
+    { id: 's3', name: 'all-articles', selector: '.title.cmp-title--underline', style: null, blocks: [], defaultContent: ['.cmp-title__text'] },
   ],
 };
 
 // PARSER REGISTRY
 const parsers = {
   cards: cardsParser,
+  columns: columnsParser,
+  'secure-teasers': secureTeasersParser,
 };
 
 // TRANSFORMER REGISTRY
