@@ -83,7 +83,7 @@ header .nav-locale-menu {
   padding: 0;
   background: #202020;
   color: #ebebeb;
-  min-width: 240px;
+  min-width: 360px;
   box-shadow: 0 6px 18px rgb(0 0 0 / 30%);
   z-index: 20;
 }
@@ -339,6 +339,12 @@ header .nav-search input::placeholder {
   }
 
   header .nav-main-inner {
+    padding: 56px 16px;
+    transition: padding 0.2s ease;
+  }
+
+  /* Scrolled state — header shrinks (matches source: 194px → 114px) */
+  header .nav-wrapper.is-scrolled .nav-main-inner {
     padding: 16px;
   }
 
