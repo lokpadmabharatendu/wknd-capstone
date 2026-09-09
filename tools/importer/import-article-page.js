@@ -50,6 +50,29 @@ export default {
     // 3. afterTransform (final cleanup + section metadata)
     executeTransformers('afterTransform', main, payload);
 
+    // 3b. "Share this Story" related-articles rail. Appended as its own trailing
+    // section (own <hr> break) so it renders as a right rail beside the article
+    // body (blocks/related-articles). Locale-scoped to the current /magazine/
+    // section so it lists sibling articles; the block excludes the current page
+    // and sorts newest-first at runtime.
+    (() => {
+      let locale = '';
+      try {
+        const segs = new URL(params.originalURL).pathname
+          .replace(/\/$/, '').replace(/\.html?$/, '')
+          .split('/').filter(Boolean);
+        if (segs.length >= 2) locale = `/${segs[0]}/${segs[1]}`;
+      } catch (e) { /* leave locale empty */ }
+      const filterPrefix = locale ? `${locale}/magazine/` : '/magazine/';
+
+      main.appendChild(document.createElement('hr'));
+      const block = WebImporter.Blocks.createBlock(document, {
+        name: 'related-articles',
+        cells: { title: 'Share this Story', filter: filterPrefix },
+      });
+      main.appendChild(block);
+    })();
+
     // 4. WebImporter built-in rules
     const hr = document.createElement('hr');
     main.appendChild(hr);

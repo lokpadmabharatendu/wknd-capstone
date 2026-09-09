@@ -1,0 +1,81 @@
+/* Block: related-articles — WKND "Share this Story" rail on article pages.
+   Mobile-first: a plain stacked list below the article. On desktop it becomes
+   a right-hand rail sitting in the gutter beside the 776px article body. */
+
+.related-articles {
+  margin: 40px 0 0;
+}
+
+.related-articles-heading {
+  margin: 0 0 24px;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+.related-articles-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.related-articles-list > li {
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.related-articles-list a:any-link {
+  display: block;
+  text-decoration: none;
+}
+
+.related-articles-item-title {
+  display: block;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+.related-articles-list a:hover .related-articles-item-title {
+  color: var(--link-color);
+}
+
+.related-articles-item-date {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--body-font-family);
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: rgb(105 105 105);
+}
+
+/* --- Desktop: right rail beside the article body ---
+   The block lives in its own section below the article; anchor it to the top
+   of the article region and float it into the right gutter. The article body
+   is a left-aligned 776px column, leaving room on the right. */
+@media (width >= 900px) {
+  main .section.related-articles-container {
+    position: absolute;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+
+    /* align right rail to the content frame's right edge */
+    right: max(32px, calc((100% - 1200px) / 2 + 32px));
+    width: 291px;
+  }
+
+  main .section.related-articles-container > div {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}

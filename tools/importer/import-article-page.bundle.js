@@ -137,6 +137,21 @@ var CustomImportScript = (() => {
       const main = document2.body;
       executeTransformers("beforeTransform", main, payload);
       executeTransformers("afterTransform", main, payload);
+      (() => {
+        let locale = "";
+        try {
+          const segs = new URL(params.originalURL).pathname.replace(/\/$/, "").replace(/\.html?$/, "").split("/").filter(Boolean);
+          if (segs.length >= 2) locale = `/${segs[0]}/${segs[1]}`;
+        } catch (e) {
+        }
+        const filterPrefix = locale ? `${locale}/magazine/` : "/magazine/";
+        main.appendChild(document2.createElement("hr"));
+        const block = WebImporter.Blocks.createBlock(document2, {
+          name: "related-articles",
+          cells: { title: "Share this Story", filter: filterPrefix }
+        });
+        main.appendChild(block);
+      })();
       const hr = document2.createElement("hr");
       main.appendChild(hr);
       WebImporter.rules.createMetadata(main, document2);
