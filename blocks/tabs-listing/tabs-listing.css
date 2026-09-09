@@ -1,0 +1,92 @@
+/* Block: tabs-listing -- tab switcher whose panels contain a card grid.
+   Tab-list styling mirrors the WKND source tab bar (uppercase buttons,
+   dark active tab); panels lay their content out for card grids. */
+
+.tabs-listing {
+  margin: 0;
+}
+
+/* --- Tab list --- */
+.tabs-listing .tabs-listing-list {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  margin: 18px 0;
+  padding: 0;
+  max-width: 100%;
+  list-style: none;
+  overflow-x: auto;
+}
+
+/* --- Tab button (inactive) --- */
+.tabs-listing .tabs-listing-list button {
+  flex: 0 0 max-content;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tabs-listing .tabs-listing-list button p {
+  margin: 0;
+}
+
+/* --- Tab button (active) --- */
+.tabs-listing .tabs-listing-list button[aria-selected='true'] {
+  background-color: var(--dark-color);
+  color: var(--background-color);
+  cursor: default;
+}
+
+/* --- Tab panel: hosts a card grid --- */
+.tabs-listing .tabs-listing-panel {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+.tabs-listing .tabs-listing-panel[aria-hidden='true'] {
+  display: none;
+}
+
+/* Let a nested cards block fill the panel; if the panel content is a raw
+   grid of items, provide a sensible 4-up responsive fallback. */
+.tabs-listing .tabs-listing-panel > .cards-wrapper,
+.tabs-listing .tabs-listing-panel > .cards {
+  margin: 0;
+}
+
+.tabs-listing .tabs-listing-panel .tabs-listing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (width <= 900px) {
+  .tabs-listing .tabs-listing-panel .tabs-listing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width <= 600px) {
+  .tabs-listing .tabs-listing-panel .tabs-listing-grid {
+    grid-template-columns: 1fr;
+  }
+}

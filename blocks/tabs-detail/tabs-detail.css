@@ -1,0 +1,111 @@
+/* Block: tabs-detail -- values extracted from wknd.site source computed styles */
+
+.tabs-detail {
+  margin: 0;
+}
+
+/* --- Tab list --- */
+.tabs-detail .tabs-detail-list {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  margin: 18px 0;
+  padding: 0;
+  max-width: 100%;
+  list-style: none;
+  overflow-x: auto;
+}
+
+/* --- Tab button (inactive) --- */
+.tabs-detail .tabs-detail-list button {
+  flex: 0 0 max-content;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  text-overflow: unset;
+  white-space: nowrap;
+  overflow: unset;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tabs-detail .tabs-detail-list button p {
+  margin: 0;
+}
+
+/* --- Tab button (active) --- */
+.tabs-detail .tabs-detail-list button[aria-selected='true'] {
+  background-color: var(--dark-color);
+  color: var(--background-color);
+  cursor: default;
+}
+
+/* --- Tab panel --- */
+.tabs-detail .tabs-detail-panel {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+.tabs-detail .tabs-detail-panel[aria-hidden='true'] {
+  display: none;
+}
+
+.tabs-detail .tabs-detail-panel h3 {
+  margin: 27px 0 13.5px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.tabs-detail .tabs-detail-panel p {
+  margin: 0 0 13.5px;
+  font-size: 18px;
+  line-height: 45px;
+}
+
+.tabs-detail .tabs-detail-panel picture {
+  display: block;
+}
+
+.tabs-detail .tabs-detail-panel img {
+  width: 100%;
+  margin: 7px 0;
+}
+
+.tabs-detail .tabs-detail-panel ul {
+  margin: 18px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tabs-detail .tabs-detail-panel li {
+  margin: 0;
+  padding-left: 12px;
+  font-size: 18px;
+  line-height: 36px;
+}
+
+/* Source uses a custom icon-font triangle marker (wknd-icon-font U+EA1C);
+   reproduced here with a CSS triangle to preserve the look. */
+.tabs-detail .tabs-detail-panel li::before {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: 8px;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 5px solid var(--text-color);
+  vertical-align: middle;
+}

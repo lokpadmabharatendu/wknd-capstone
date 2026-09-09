@@ -1,0 +1,75 @@
+/* Accordion (FAQ) block — WKND expandable question/answer list.
+   Question rows separated by thin rules; a +/- icon toggles the answer panel. */
+
+.accordion-faq {
+  margin: 24px 0;
+}
+
+.accordion-faq .accordion-faq-item {
+  border-top: 1px solid #e6e6e6;
+}
+
+.accordion-faq .accordion-faq-item:last-child {
+  border-bottom: 1px solid #e6e6e6;
+}
+
+/* Question header */
+.accordion-faq .accordion-faq-item-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 40px 18px 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+/* Remove default disclosure triangle */
+.accordion-faq .accordion-faq-item-label::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-faq .accordion-faq-item-label::marker {
+  content: '';
+}
+
+/* +/- toggle icon */
+.accordion-faq .accordion-faq-item-label::after {
+  content: '+';
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--text-color);
+}
+
+.accordion-faq .accordion-faq-item[open] .accordion-faq-item-label::after {
+  content: '\2212'; /* minus sign */
+}
+
+/* Answer panel */
+.accordion-faq .accordion-faq-item-body {
+  padding: 0 40px 20px 0;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.accordion-faq .accordion-faq-item-body p {
+  margin: 0 0 12px;
+}
+
+.accordion-faq .accordion-faq-item-body p:last-child {
+  margin-bottom: 0;
+}

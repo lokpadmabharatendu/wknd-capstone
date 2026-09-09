@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "url": "https://wknd.site/ca/en.html",
+  "path": "ca/en",
+  "timestamp": "2026-09-08T20:07:24.167Z",
+  "title": "WKND Adventures and Travel",
+  "template": "homepage",
+  "blocks": [
+    "carousel-hero",
+    "columns",
+    "hero",
+    "hero",
+    "hero",
+    "hero",
+    "cards",
+    "cards"
+  ]
+}

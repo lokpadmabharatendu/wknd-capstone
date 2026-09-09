@@ -1,0 +1,37 @@
+{
+  "variantName": "tabs-detail",
+  "baseBlock": "tabs",
+  "version": "1.0.0",
+  "created": "2026-09-08T18:14:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/adventures/bali-surf-camp.html",
+    "originPage": "adventure detail page",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "minimal",
+    "purpose": "detail-tabs",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "tab label + tab content (paragraphs, image, lists) per row",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "adventure/product detail pages with Overview/Itinerary/What-to-Bring style tabs",
+      "sectioned long-form content grouped under labeled tabs"
+    ],
+    "notSuitableFor": [
+      "single-section content",
+      "collapsible FAQ style content (use accordion)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/adventures/bali-surf-camp"],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-08T18:14:00.000Z"
+  }
+}
