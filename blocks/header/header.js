@@ -77,6 +77,37 @@ export default async function decorate(block) {
     signIn.className = 'nav-signin';
     signIn.append(...signInSec.querySelectorAll('a'));
     utilityInner.append(signIn);
+
+    // Sign In opens a modal login form (matches source). Form controls are
+    // built here, not in the fragment.
+    const signInLink = signIn.querySelector('a');
+    if (signInLink) {
+      const overlay = document.createElement('div');
+      overlay.className = 'nav-signin-overlay';
+      overlay.innerHTML = `
+        <div class="nav-signin-modal" role="dialog" aria-modal="true" aria-label="Sign In">
+          <button type="button" class="nav-signin-close" aria-label="Close">&times;</button>
+          <h2 class="nav-signin-title">Sign In</h2>
+          <p class="nav-signin-welcome">Welcome Back</p>
+          <form class="nav-signin-form">
+            <input type="text" name="username" placeholder="USERNAME" aria-label="Username">
+            <input type="password" name="password" placeholder="PASSWORD" aria-label="Password">
+            <a class="nav-signin-forgot" href="#forgot-password">Forgot your password?</a>
+            <button type="submit" class="nav-signin-submit">Sign In</button>
+          </form>
+        </div>`;
+      const closeModal = () => overlay.classList.remove('open');
+      signInLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || e.target.closest('.nav-signin-close')) closeModal();
+      });
+      overlay.querySelector('.nav-signin-form').addEventListener('submit', (e) => e.preventDefault());
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+      block.append(overlay);
+    }
   }
 
   // Locale selector (flag-dropdown) — country-grouped dark panel.
