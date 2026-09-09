@@ -1,11 +1,16 @@
 /* WKND header — mobile-first. Dark utility bar over a white nav bar. */
 /* stylelint-disable no-descending-specificity -- rules grouped by component, not specificity */
 
-header .nav-wrapper {
-  width: 100%;
-  z-index: 10;
+/* Sticky must live on the <header> itself — a sticky inner wrapper scrolls
+   away with its short static parent. */
+header {
   position: sticky;
   top: 0;
+  z-index: 10;
+}
+
+header .nav-wrapper {
+  width: 100%;
   background-color: #fff;
   font-family: var(--body-font-family);
 }
@@ -41,6 +46,112 @@ header .nav-locale-toggle {
 
 header .nav-signin a:hover {
   text-decoration: underline;
+}
+
+/* ---- Sign In modal ---- */
+header .nav-signin-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 50%);
+  z-index: 50;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+header .nav-signin-overlay.open {
+  display: flex;
+}
+
+header .nav-signin-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin-top: 140px;
+  padding: 48px 56px 56px;
+  box-sizing: border-box;
+  background-color: #202020;
+  color: #fff;
+}
+
+header .nav-signin-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: 0;
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+header .nav-signin-title {
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 3px solid #ffea00;
+  font-family: var(--heading-font-family);
+  font-weight: 400;
+  font-size: 36px;
+  color: #fff;
+}
+
+header .nav-signin-welcome {
+  margin: 28px 0 20px;
+  font-family: var(--heading-font-family);
+  font-size: 22px;
+  color: #fff;
+}
+
+header .nav-signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+header .nav-signin-form input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px;
+  background-color: transparent;
+  border: 1px solid rgb(255 255 255 / 40%);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+header .nav-signin-form input::placeholder {
+  color: rgb(255 255 255 / 60%);
+  text-transform: uppercase;
+}
+
+header .nav-signin-forgot {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+header .nav-signin-forgot:hover {
+  text-decoration: underline;
+}
+
+header .nav-signin-submit {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 14px 35px;
+  background-color: #ffea00;
+  border: 0;
+  color: #202020;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
 /* Locale flag-dropdown */
@@ -98,10 +209,11 @@ header .nav-locale-menu > ul {
   padding: 0;
 }
 
-/* Each country group */
+/* Each country group — flag on the left, name over locale codes on the right */
 header .nav-locale-menu > ul > li {
+  position: relative;
   margin: 0;
-  padding: 16px 20px;
+  padding: 14px 20px 14px 52px;
   border-bottom: 1px solid rgb(255 255 255 / 12%);
 }
 
@@ -109,12 +221,9 @@ header .nav-locale-menu > ul > li:last-child {
   border-bottom: 0;
 }
 
-/* Country heading (flag + name) */
+/* Country heading (name only) — flag is pulled out to the left via the img */
 header .nav-locale-menu > ul > li > p {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   color: #ebebeb;
   font-size: 12px;
   font-weight: 700;
@@ -122,30 +231,45 @@ header .nav-locale-menu > ul > li > p {
   text-transform: uppercase;
 }
 
+/* Flag positioned to the left, vertically centered against the group */
 header .nav-locale-menu > ul > li > p img {
-  width: 20px;
-  height: 14px;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 15px;
   object-fit: cover;
   display: block;
 }
 
-/* Locale links within a country — inline, pipe-like row */
+/* Locale codes — inline row separated by pipes */
 header .nav-locale-menu > ul > li > ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 14px;
+  align-items: center;
 }
 
 header .nav-locale-menu > ul > li > ul li {
   margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* pipe separator between codes (not before the first) */
+header .nav-locale-menu > ul > li > ul li + li::before {
+  content: '|';
+  margin: 0 10px;
+  color: rgb(255 255 255 / 40%);
 }
 
 header .nav-locale-menu > ul > li > ul a {
   color: #f7f7f7;
   font-size: 14px;
+  font-weight: 700;
   text-transform: uppercase;
   text-decoration: none;
 }
@@ -294,7 +418,8 @@ header .nav-links a {
 }
 
 header .nav-links a:hover,
-header .nav-links a:focus-visible {
+header .nav-links a:focus-visible,
+header .nav-links .nav-active > a {
   background-color: #ffea00;
   color: #202020;
 }

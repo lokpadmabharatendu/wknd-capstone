@@ -77,6 +77,37 @@ export default async function decorate(block) {
     signIn.className = 'nav-signin';
     signIn.append(...signInSec.querySelectorAll('a'));
     utilityInner.append(signIn);
+
+    // Sign In opens a modal login form (matches source). Form controls are
+    // built here, not in the fragment.
+    const signInLink = signIn.querySelector('a');
+    if (signInLink) {
+      const overlay = document.createElement('div');
+      overlay.className = 'nav-signin-overlay';
+      overlay.innerHTML = `
+        <div class="nav-signin-modal" role="dialog" aria-modal="true" aria-label="Sign In">
+          <button type="button" class="nav-signin-close" aria-label="Close">&times;</button>
+          <h2 class="nav-signin-title">Sign In</h2>
+          <p class="nav-signin-welcome">Welcome Back</p>
+          <form class="nav-signin-form">
+            <input type="text" name="username" placeholder="USERNAME" aria-label="Username">
+            <input type="password" name="password" placeholder="PASSWORD" aria-label="Password">
+            <a class="nav-signin-forgot" href="#forgot-password">Forgot your password?</a>
+            <button type="submit" class="nav-signin-submit">Sign In</button>
+          </form>
+        </div>`;
+      const closeModal = () => overlay.classList.remove('open');
+      signInLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        overlay.classList.add('open');
+      });
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || e.target.closest('.nav-signin-close')) closeModal();
+      });
+      overlay.querySelector('.nav-signin-form').addEventListener('submit', (e) => e.preventDefault());
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+      block.append(overlay);
+    }
   }
 
   // Locale selector (flag-dropdown) — country-grouped dark panel.
@@ -153,11 +184,25 @@ export default async function decorate(block) {
     links.setAttribute('aria-label', 'Main navigation');
     const ul = linksSec.querySelector('ul');
     if (ul) {
-      // WKND hides "Home" from the visible desktop nav (logo links home) and
-      // shows it only on mobile — tag it so CSS can match that behavior.
+      // Normalize the current path (drop locale prefix + .html) so it can be
+      // matched against each nav link's section.
+      const currentPath = window.location.pathname
+        .replace(/\.html?$/, '')
+        .replace(/\/$/, '');
       ul.querySelectorAll('li > a').forEach((a) => {
-        if (a.textContent.trim().toLowerCase() === 'home') {
+        const label = a.textContent.trim().toLowerCase();
+        // WKND hides "Home" from the visible desktop nav (logo links home) and
+        // shows it only on mobile — tag it so CSS can match that behavior.
+        if (label === 'home') {
           a.closest('li').classList.add('nav-home-item');
+        }
+        // Active/selected state: highlight the nav item whose section the
+        // current page falls under (e.g. Magazine stays lit on an article).
+        const linkPath = (a.getAttribute('href') || '').replace(/\.html?$/, '').replace(/\/$/, '');
+        const seg = linkPath.split('/').pop();
+        if (seg && label !== 'home' && (currentPath === linkPath || currentPath.includes(`/${seg}`))) {
+          a.closest('li').classList.add('nav-active');
+          a.setAttribute('aria-current', 'page');
         }
       });
       links.append(ul);
