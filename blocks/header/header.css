@@ -12,6 +12,8 @@ header .nav-wrapper {
 
 /* ---- Utility bar (dark) ---- */
 header .nav-utility {
+  position: relative;
+  z-index: 40; /* above .nav-tools (z-index 30) so the locale panel isn't covered by search */
   background-color: #202020;
   color: #fff;
 }

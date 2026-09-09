@@ -1,6 +1,8 @@
 /* Block: tabs-listing -- tab switcher whose panels contain a card grid.
    Tab-list styling mirrors the WKND source tab bar (uppercase buttons,
-   dark active tab); panels lay their content out for card grids. */
+   dark active tab). Each panel holds a table (thead "Cards" label + rows of
+   image/body cells) that CSS reshapes into a responsive 4-up card grid,
+   matching the source image-list. Values from wknd.site computed styles. */
 
 .tabs-listing {
   margin: 0;
@@ -9,7 +11,7 @@
 /* --- Tab list --- */
 .tabs-listing .tabs-listing-list {
   display: flex;
-  flex-direction: row;
+  flex-flow: row wrap;
   gap: 0;
   margin: 18px 0;
   padding: 0;
@@ -59,34 +61,122 @@
   color: var(--text-color);
 }
 
+/* Only the active panel is visible; the JS toggles aria-hidden. */
 .tabs-listing .tabs-listing-panel[aria-hidden='true'] {
   display: none;
 }
 
-/* Let a nested cards block fill the panel; if the panel content is a raw
-   grid of items, provide a sensible 4-up responsive fallback. */
-.tabs-listing .tabs-listing-panel > .cards-wrapper,
-.tabs-listing .tabs-listing-panel > .cards {
+/* The panel wraps a single cell that contains the card table. */
+.tabs-listing .tabs-listing-panel > div {
   margin: 0;
-}
-
-.tabs-listing .tabs-listing-panel .tabs-listing-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin: 18px 0 0;
   padding: 0;
-  list-style: none;
 }
 
-@media (width <= 900px) {
-  .tabs-listing .tabs-listing-panel .tabs-listing-grid {
+/* Reshape the authored table into a card grid. */
+.tabs-listing .tabs-listing-panel table {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Hide the stray "Cards" table header label. */
+.tabs-listing .tabs-listing-panel thead {
+  display: none;
+}
+
+/* tbody = grid of cards (mobile-first: 1-up). */
+.tabs-listing .tabs-listing-panel tbody {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px 14px;
+}
+
+/* Each row is one card: image on top, body below. min-width:0 keeps the
+   nowrap-truncated description from stretching the grid track. */
+.tabs-listing .tabs-listing-panel tr {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+}
+
+.tabs-listing .tabs-listing-panel td {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: top;
+}
+
+/* Image cell: 260x200 in source -> aspect-ratio 13/10, cover, square corners. */
+.tabs-listing .tabs-listing-panel td picture {
+  display: block;
+  line-height: 0;
+}
+
+.tabs-listing .tabs-listing-panel td img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 13 / 10;
+  margin: 0;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+/* Title: source is 18px/27px weight-600 uppercase body font in dark text color
+   (matches the homepage cards grid). In the EDS DOM it is an h3 > a; the link
+   inherits the dark colour and turns brand blue on hover. */
+.tabs-listing .tabs-listing-panel h3 {
+  margin: 12px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 27px;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+.tabs-listing .tabs-listing-panel h3 a:any-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.tabs-listing .tabs-listing-panel h3 a:hover {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+/* Description: 14px/21px weight 400, muted grey, 16px above. Source truncates
+   to a single line with an ellipsis for uniform card heights. */
+/* stylelint-disable-next-line no-descending-specificity */
+.tabs-listing .tabs-listing-panel td p {
+  margin: 16px 0 0;
+  overflow: hidden;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgb(105 105 105);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Responsive: 2-up on tablet, 4-up on desktop (source is 4-up flex-wrap). */
+@media (width >= 600px) {
+  .tabs-listing .tabs-listing-panel tbody {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (width <= 600px) {
-  .tabs-listing .tabs-listing-panel .tabs-listing-grid {
-    grid-template-columns: 1fr;
+@media (width >= 900px) {
+  .tabs-listing .tabs-listing-panel tbody {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
