@@ -76,10 +76,10 @@ export default async function decorate(block) {
   // Authoring options (all optional):
   //   source  – query-index URL (default /query-index.json)
   //   filter  – only include rows whose path starts with this prefix
-  //   limit   – cards shown per page (default 4)
+  //   limit   – number of cards shown (default 4)
   const source = config.source || '/query-index.json';
   const filter = config.filter || '';
-  const pageSize = Number(config.limit) || PAGE_SIZE;
+  const limit = Number(config.limit) || PAGE_SIZE;
 
   block.textContent = '';
 
@@ -90,41 +90,9 @@ export default async function decorate(block) {
 
   if (!rows.length) return;
 
+  // Show only the latest N (default 4) — no paging.
   const list = document.createElement('ul');
   list.className = 'recent-articles-list';
-
-  const nav = document.createElement('div');
-  nav.className = 'recent-articles-navigation-buttons';
-  const prev = document.createElement('button');
-  prev.type = 'button';
-  prev.className = 'slide-prev';
-  prev.setAttribute('aria-label', 'Previous articles');
-  const next = document.createElement('button');
-  next.type = 'button';
-  next.className = 'slide-next';
-  next.setAttribute('aria-label', 'Next articles');
-  nav.append(prev, next);
-
-  const pageCount = Math.ceil(rows.length / pageSize);
-  let page = 0;
-
-  const render = () => {
-    const start = page * pageSize;
-    const slice = rows.slice(start, start + pageSize);
-    list.replaceChildren(...slice.map(buildCard));
-    prev.disabled = page <= 0;
-    next.disabled = page >= pageCount - 1;
-  };
-
-  prev.addEventListener('click', () => {
-    if (page > 0) { page -= 1; render(); }
-  });
-  next.addEventListener('click', () => {
-    if (page < pageCount - 1) { page += 1; render(); }
-  });
-
-  render();
+  list.append(...rows.slice(0, limit).map(buildCard));
   block.append(list);
-  // Only expose paging controls when there's more than one page.
-  if (pageCount > 1) block.append(nav);
 }

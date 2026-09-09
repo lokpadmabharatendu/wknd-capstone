@@ -77,53 +77,6 @@
   text-overflow: ellipsis;
 }
 
-/* Paging arrows — thin black arrows, bottom-right (mirrors carousel-hero). */
-.recent-articles .recent-articles-navigation-buttons {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 18px;
-  margin-top: 24px;
-}
-
-.recent-articles .recent-articles-navigation-buttons button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 30px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background-color: transparent;
-  cursor: pointer;
-}
-
-.recent-articles .recent-articles-navigation-buttons button:disabled {
-  opacity: 0.25;
-  cursor: default;
-}
-
-.recent-articles .recent-articles-navigation-buttons button::after {
-  content: '';
-  display: block;
-  width: 28px;
-  height: 28px;
-  background-color: #000;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-}
-
-.recent-articles .recent-articles-navigation-buttons button.slide-prev::after {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10,6 4,12 10,18"/></svg>');
-}
-
-.recent-articles .recent-articles-navigation-buttons button.slide-next::after {
-  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14,6 20,12 14,18"/></svg>');
-}
-
 /* Responsive: 2-up on tablet, 4-up on desktop */
 @media (width >= 600px) {
   .recent-articles .recent-articles-list {
