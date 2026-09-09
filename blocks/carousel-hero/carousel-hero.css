@@ -2,10 +2,11 @@
 
 /* Values extracted from source computed styles (wknd.site/us/en). */
 
-/* Full-width: override EDS section wrapper max-width + padding */
+/* Full-width: override EDS section wrapper max-width + padding
+   (the global `main > .section > div` rule sets padding: 0 32px at >=900px) */
 main .carousel-hero-wrapper {
   max-width: 100% !important;
-  padding: 0;
+  padding: 0 !important;
 }
 
 .carousel-hero {
@@ -39,7 +40,7 @@ main .carousel-hero-wrapper {
   width: 100%;
 }
 
-/* --- Slide image (full-width, 2:1) --- */
+/* --- Slide image (full-width, 2.25:1) --- */
 .carousel-hero .carousel-hero-slide-image {
   width: 100%;
   line-height: 0;
@@ -53,7 +54,7 @@ main .carousel-hero-wrapper {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 2.25 / 1; /* source: 1440x640 full-bleed */
   object-fit: cover;
 }
 

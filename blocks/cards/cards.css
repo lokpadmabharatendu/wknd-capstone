@@ -17,6 +17,7 @@
 .cards > ul > li {
   margin: 0;
   padding: 0;
+  min-width: 0; /* let nowrap description ellipsis-truncate instead of widening the grid track */
   background-color: transparent;
   border: none;
   border-radius: 0;
@@ -37,6 +38,7 @@
 
 .cards .cards-card-body {
   margin: 0;
+  min-width: 0; /* contain the nowrap description so it truncates rather than overflowing */
 }
 
 /* Title: span.cmp-image-list__item-title in source -> h3 (with link) in EDS.
@@ -69,6 +71,11 @@
   font-weight: 400;
   line-height: 21px;
   color: rgb(105 105 105);
+
+  /* source truncates the description to a single line with an ellipsis */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Responsive: 2-up on tablet, 4-up on desktop (source is 4-up flex-wrap) */
