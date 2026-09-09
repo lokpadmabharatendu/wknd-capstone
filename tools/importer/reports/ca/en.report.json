@@ -2,7 +2,7 @@
   "status": "success",
   "url": "https://wknd.site/ca/en.html",
   "path": "ca/en",
-  "timestamp": "2026-09-08T20:07:24.167Z",
+  "timestamp": "2026-09-09T17:26:31.331Z",
   "title": "WKND Adventures and Travel",
   "template": "homepage",
   "blocks": [
@@ -12,7 +12,7 @@
     "hero",
     "hero",
     "hero",
-    "cards",
+    "recent-articles",
     "cards"
   ]
 }

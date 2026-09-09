@@ -254,6 +254,12 @@
           ]
         },
         {
+          "name": "recent-articles",
+          "instances": [
+            ".title.cmp-title--underline + .image-list.list"
+          ]
+        },
+        {
           "name": "cards",
           "instances": [
             ".image-list.list"
@@ -287,7 +293,7 @@
           "selector": ".title.cmp-title--underline",
           "style": null,
           "blocks": [
-            "cards"
+            "recent-articles"
           ],
           "defaultContent": [
             ".cmp-title__text"
