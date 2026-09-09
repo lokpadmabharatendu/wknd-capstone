@@ -108,7 +108,9 @@ export default async function decorate(block) {
       <button type="button" class="slide-next" aria-label="${placeholders.nextSlide || 'Next Slide'}"></button>
     `;
 
-    container.append(slideNavButtons);
+    // append to the block (not the slides container) so the arrows sit on the
+    // white band below the image, not overlapping it.
+    block.append(slideNavButtons);
   }
 
   rows.forEach((row, idx) => {
