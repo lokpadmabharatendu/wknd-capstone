@@ -80,6 +80,8 @@
 
 .tabs-detail .tabs-detail-panel img {
   width: 100%;
+  max-width: 845px; /* match source: panel image sits in a narrower content column */
+  height: auto;
   margin: 7px 0;
 }
 

@@ -335,3 +335,24 @@ main .section.grey {
   margin: 0;
   padding: 40px 0;
 }
+
+/* article body — narrow centered reading column with airy line-height;
+   images stay at the full content width (matches wknd.site articles).
+   Text elements are individually constrained + centered so image paragraphs
+   can still span the full width. */
+main .section.article-body .default-content-wrapper > h1,
+main .section.article-body .default-content-wrapper > h2,
+main .section.article-body .default-content-wrapper > h3,
+main .section.article-body .default-content-wrapper > h4,
+main .section.article-body .default-content-wrapper > ul,
+main .section.article-body .default-content-wrapper > ol,
+main .section.article-body .default-content-wrapper > blockquote,
+main .section.article-body .default-content-wrapper > p:not(:has(picture)) {
+  max-width: 776px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+main .section.article-body .default-content-wrapper > p:not(:has(picture)) {
+  line-height: 45px;
+}

@@ -66,6 +66,12 @@
   color: var(--text-color);
 }
 
+/* Collapsed by default — only the active (open) item shows its answer,
+   matching the source (all items closed on load) */
+.accordion-faq .accordion-faq-item:not([open]) .accordion-faq-item-body {
+  display: none;
+}
+
 .accordion-faq .accordion-faq-item-body p {
   margin: 0 0 12px;
 }

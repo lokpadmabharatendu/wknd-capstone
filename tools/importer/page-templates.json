@@ -363,7 +363,7 @@
           "id": "s3",
           "name": "article-body",
           "selector": ".cmp-contentfragment__elements",
-          "style": null,
+          "style": "article-body",
           "blocks": [],
           "defaultContent": [
             ".cmp-contentfragment__title",

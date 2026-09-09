@@ -16,7 +16,7 @@ const PAGE_TEMPLATE = {
   sections: [
     { id: 's1', name: 'lead-image', selector: 'main.cmp-layout-container--fixed > div > div > div.image.aem-GridColumn', style: null, blocks: [], defaultContent: ['.cmp-image'] },
     { id: 's2', name: 'breadcrumb', selector: '.breadcrumb.aem-GridColumn', style: null, blocks: [], defaultContent: ['.cmp-breadcrumb'] },
-    { id: 's3', name: 'article-body', selector: '.cmp-contentfragment__elements', style: null, blocks: [], defaultContent: ['.cmp-contentfragment__title', 'blockquote'] },
+    { id: 's3', name: 'article-body', selector: '.cmp-contentfragment__elements', style: 'article-body', blocks: [], defaultContent: ['.cmp-contentfragment__title', 'blockquote'] },
   ],
 };
 
