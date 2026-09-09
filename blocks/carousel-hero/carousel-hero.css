@@ -161,8 +161,8 @@ main .carousel-hero-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 24px;
+  width: 34px;
+  height: 30px;
   margin: 0;
   padding: 0;
   border: 0;
@@ -171,21 +171,25 @@ main .carousel-hero-wrapper {
   cursor: pointer;
 }
 
-/* Full arrows with a tail (← →), matching the source — not head-only chevrons. */
+/* Full arrows with a tail (← →), drawn as inline SVG so the stroke weight and
+   size match the source's icon-font glyphs (thin line + arrowhead, ~28px). */
 .carousel-hero .carousel-hero-navigation-buttons button::after {
+  content: '';
   display: block;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 1;
-  color: #000;
+  width: 28px;
+  height: 28px;
+  background-color: #000;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 }
 
 .carousel-hero .carousel-hero-navigation-buttons button.slide-prev::after {
-  content: '\2190'; /* leftwards arrow */
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10,6 4,12 10,18"/></svg>');
 }
 
 .carousel-hero .carousel-hero-navigation-buttons button.slide-next::after {
-  content: '\2192'; /* rightwards arrow */
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14,6 20,12 14,18"/></svg>');
 }
 
 /* --- Desktop --- */

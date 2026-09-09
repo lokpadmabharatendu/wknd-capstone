@@ -314,38 +314,6 @@ main > .section {
   margin: 40px 0;
 }
 
-/* Thin separator rule between stacked default-content sections, inset to the
-   content width (matches wknd.site section dividers). */
-main > .section + .section:not(.grey, .dark, .light, .highlight)::before {
-  content: '';
-  display: block;
-  width: calc(100% - 48px);
-  max-width: 1200px;
-  margin: 0 auto 40px;
-  border-top: 1px solid #e6e6e6;
-}
-
-/* Trailing separator below the final content section (matches wknd.site's
-   rule above the footer). */
-main > .section:last-of-type::after {
-  content: '';
-  display: block;
-  width: calc(100% - 48px);
-  max-width: 1200px;
-  margin: 40px auto 0;
-  border-top: 1px solid #e6e6e6;
-}
-
-@media (width >= 900px) {
-  main > .section + .section:not(.grey, .dark, .light, .highlight)::before {
-    width: calc(100% - 64px);
-  }
-
-  main > .section:last-of-type::after {
-    width: calc(100% - 64px);
-  }
-}
-
 main > .section > div {
   max-width: 1200px;
   margin: auto;
