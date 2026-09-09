@@ -79,33 +79,34 @@ export default async function decorate(block) {
     utilityInner.append(signIn);
   }
 
-  // Locale selector (flag-dropdown) built from the locale list
+  // Locale selector (flag-dropdown) — country-grouped dark panel.
   if (localeSec) {
     const localeWrap = document.createElement('div');
     localeWrap.className = 'nav-locale';
-    const items = [...localeSec.querySelectorAll('li')];
-    const current = items[0]; // en-US is first / current
+
+    // First locale link (en-US) drives the toggle label + current flag.
+    const firstLink = localeSec.querySelector('li ul li a') || localeSec.querySelector('a');
+    const firstGroupImg = localeSec.querySelector('li > p img');
+
     const toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'nav-locale-toggle';
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-haspopup', 'true');
-    if (current) {
-      const a = current.querySelector('a');
-      const img = a && a.querySelector('img');
-      if (img) toggle.append(img.cloneNode(true));
-      const label = document.createElement('span');
-      label.textContent = (a ? a.textContent : 'en-US').trim();
-      toggle.append(label);
-    }
+    if (firstGroupImg) toggle.append(firstGroupImg.cloneNode(true));
+    const label = document.createElement('span');
+    label.textContent = (firstLink ? firstLink.textContent : 'en-US').trim();
+    toggle.append(label);
     const caret = document.createElement('span');
     caret.className = 'nav-locale-caret';
     caret.setAttribute('aria-hidden', 'true');
     toggle.append(caret);
 
-    const menu = document.createElement('ul');
+    // Panel: reuse the grouped <ul> from the fragment (country heading + locales).
+    const menu = document.createElement('div');
     menu.className = 'nav-locale-menu';
-    items.forEach((li) => menu.append(li));
+    const groupList = localeSec.querySelector('ul');
+    if (groupList) menu.append(groupList);
 
     toggle.addEventListener('click', () => {
       const open = localeWrap.classList.toggle('open');
