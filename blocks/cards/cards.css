@@ -17,6 +17,7 @@
 .cards > ul > li {
   margin: 0;
   padding: 0;
+  min-width: 0; /* let nowrap description ellipsis-truncate instead of widening the grid track */
   background-color: transparent;
   border: none;
   border-radius: 0;
@@ -37,6 +38,7 @@
 
 .cards .cards-card-body {
   margin: 0;
+  min-width: 0; /* contain the nowrap description so it truncates rather than overflowing */
 }
 
 /* Title: span.cmp-image-list__item-title in source -> h3 (with link) in EDS.
