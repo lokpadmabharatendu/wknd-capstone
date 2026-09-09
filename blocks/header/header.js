@@ -188,4 +188,11 @@ export default async function decorate(block) {
   isDesktop.addEventListener('change', () => {
     if (isDesktop.matches) setOpen(false);
   });
+
+  // Shrink the header on scroll (matches source: tall at top, compact when scrolled)
+  const onScroll = () => {
+    header.classList.toggle('is-scrolled', window.scrollY > 40);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 }
