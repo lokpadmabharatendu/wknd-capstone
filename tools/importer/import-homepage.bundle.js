@@ -1,26 +1,8 @@
-/* eslint-disable */
 var CustomImportScript = (() => {
   var __defProp = Object.defineProperty;
-  var __defProps = Object.defineProperties;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __propIsEnum = Object.prototype.propertyIsEnumerable;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __spreadValues = (a, b) => {
-    for (var prop in b || (b = {}))
-      if (__hasOwnProp.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    if (__getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(b)) {
-        if (__propIsEnum.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      }
-    return a;
-  };
-  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
@@ -112,7 +94,64 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/cards.js
-  function parse4(element, { document: document2 }) {
+  var CONTRIBUTOR_SELECTOR = "section.cmp-experience-fragment--contributor";
+  function buildContributorRow(section, document2) {
+    const image = section.querySelector(
+      "div.image .cmp-image__image, div.image img, .cmp-image img, img"
+    );
+    const nameEl = section.querySelector("h3.cmp-title__text, .cmp-title h3, h3");
+    const roleEl = section.querySelector("h5.cmp-title__text, .cmp-title h5, h5");
+    const socialLinks = Array.from(section.querySelectorAll("a.cmp-button, .cmp-button a"));
+    if (!image && !nameEl && !roleEl && !socialLinks.length) return null;
+    const bodyCell = [];
+    if (nameEl && nameEl.textContent.trim()) {
+      const h3 = document2.createElement("h3");
+      h3.textContent = nameEl.textContent.trim();
+      bodyCell.push(h3);
+    }
+    if (roleEl && roleEl.textContent.trim()) {
+      const p = document2.createElement("p");
+      p.textContent = roleEl.textContent.trim();
+      bodyCell.push(p);
+    }
+    socialLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href) return;
+      const label = (link.querySelector(".cmp-button__text") || link).textContent.trim();
+      const p = document2.createElement("p");
+      const a = document2.createElement("a");
+      a.setAttribute("href", href);
+      a.textContent = label || href;
+      p.append(a);
+      bodyCell.push(p);
+    });
+    return [image || "", bodyCell];
+  }
+  function parseContributorCards(element, document2) {
+    const parent = element.parentElement;
+    let group = parent ? Array.from(parent.querySelectorAll(`:scope > ${CONTRIBUTOR_SELECTOR}`)) : [];
+    if (!group.includes(element)) {
+      group = parent ? Array.from(parent.querySelectorAll(CONTRIBUTOR_SELECTOR)) : [];
+    }
+    if (!group.includes(element)) group = [element];
+    if (group[0] !== element) {
+      element.remove();
+      return;
+    }
+    const cells = [];
+    group.forEach((section) => {
+      const row = buildContributorRow(section, document2);
+      if (row) cells.push(row);
+    });
+    if (!cells.length) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+    const block = WebImporter.Blocks.createBlock(document2, { name: "cards", cells });
+    element.replaceWith(block);
+    group.slice(1).forEach((section) => section.remove());
+  }
+  function parseImageList(element, document2) {
     const items = element.querySelectorAll(".cmp-image-list__item, li");
     const cells = [];
     items.forEach((item) => {
@@ -151,6 +190,40 @@ var CustomImportScript = (() => {
     const block = WebImporter.Blocks.createBlock(document2, { name: "cards", cells });
     element.replaceWith(block);
   }
+  function parse4(element, { document: document2 }) {
+    const isContributor = element.matches ? element.matches(CONTRIBUTOR_SELECTOR) : element.classList && element.classList.contains("cmp-experience-fragment--contributor");
+    if (isContributor) {
+      parseContributorCards(element, document2);
+      return;
+    }
+    parseImageList(element, document2);
+  }
+
+  // tools/importer/parsers/recent-articles.js
+  function localeFromUrl(params) {
+    const src = params && (params.originalURL || params.url) || "";
+    try {
+      const path = new URL(src).pathname.replace(/\/$/, "").replace(/\.html?$/, "");
+      const segs = path.split("/").filter(Boolean);
+      if (segs.length >= 2) return `/${segs[0]}/${segs[1]}`;
+      if (segs.length === 1) return `/${segs[0]}`;
+    } catch (e) {
+    }
+    return "";
+  }
+  function parse5(element, { document: document2, params }) {
+    const prev = element.previousElementSibling;
+    const isRecentArticles = prev && prev.classList && prev.classList.contains("cmp-title--underline");
+    if (!isRecentArticles) return;
+    const locale = localeFromUrl(params);
+    const cells = {};
+    if (locale) cells.filter = `${locale}/magazine/`;
+    const block = WebImporter.Blocks.createBlock(document2, {
+      name: "recent-articles",
+      cells
+    });
+    element.replaceWith(block);
+  }
 
   // tools/importer/transformers/wknd-cleanup.js
   var TransformHook = { beforeTransform: "beforeTransform", afterTransform: "afterTransform" };
@@ -170,6 +243,10 @@ var CustomImportScript = (() => {
         "meta",
         "link",
         "noscript"
+      ]);
+      WebImporter.DOMUtils.remove(element, [
+        "div.experiencefragment",
+        "aside.cmp-layoutcontainer--sidebar"
       ]);
       element.querySelectorAll(".title .cmp-title__text").forEach((el) => {
         if (el.textContent.trim() === "Share this Adventure") {
@@ -239,12 +316,16 @@ var CustomImportScript = (() => {
       { name: "carousel-hero", instances: [".carousel.panelcontainer.cmp-carousel--hero"] },
       { name: "columns", instances: [".teaser.cmp-teaser--featured"] },
       { name: "hero", instances: [".teaser.cmp-teaser--hero.cmp-teaser--imagebottom", ".teaser.cmp-teaser--hero"] },
+      // recent-articles must precede cards: the Recent Articles image-list (the
+      // one adjacent to the underline title) is claimed here first, so the cards
+      // parser below only picks up the remaining "Where do you want to go?" grid.
+      { name: "recent-articles", instances: [".title.cmp-title--underline + .image-list.list"] },
       { name: "cards", instances: [".image-list.list"] }
     ],
     sections: [
       { id: "s1", name: "hero-carousel", selector: ".carousel.panelcontainer.cmp-carousel--hero", style: null, blocks: ["carousel-hero"], defaultContent: [] },
       { id: "s2", name: "featured-article", selector: ".teaser.cmp-teaser--featured", style: "grey", blocks: ["columns"], defaultContent: [] },
-      { id: "s3", name: "recent-articles", selector: ".title.cmp-title--underline", style: null, blocks: ["cards"], defaultContent: [".cmp-title__text"] },
+      { id: "s3", name: "recent-articles", selector: ".title.cmp-title--underline", style: null, blocks: ["recent-articles"], defaultContent: [".cmp-title__text"] },
       { id: "s4", name: "next-adventures-hero", selector: ".teaser.cmp-teaser--hero.cmp-teaser--imagebottom", style: null, blocks: ["hero"], defaultContent: [".cmp-title__text"] },
       { id: "s5", name: "where-to-go-adventures", selector: ".title:not(.cmp-title--underline)", style: null, blocks: ["cards"], defaultContent: [".cmp-title__text"] }
     ]
@@ -253,14 +334,15 @@ var CustomImportScript = (() => {
     "carousel-hero": parse,
     columns: parse2,
     hero: parse3,
-    cards: parse4
+    cards: parse4,
+    "recent-articles": parse5
   };
   var transformers = [
     transform,
     ...PAGE_TEMPLATE.sections && PAGE_TEMPLATE.sections.length > 1 ? [transform2] : []
   ];
   function executeTransformers(hookName, element, payload) {
-    const enhancedPayload = __spreadProps(__spreadValues({}, payload), { template: PAGE_TEMPLATE });
+    const enhancedPayload = { ...payload, template: PAGE_TEMPLATE };
     transformers.forEach((transformerFn) => {
       try {
         transformerFn.call(null, hookName, element, enhancedPayload);
