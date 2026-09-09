@@ -175,6 +175,27 @@ function decorateSectionMetadata(main) {
   });
 }
 
+/**
+ * WKND CTA buttons. On wknd.site, a standalone link paragraph in default
+ * content (e.g. "All Articles", "All Trips") renders as a solid yellow square
+ * button. The vendored decorateButtons only buttonizes links wrapped in
+ * strong/em, so these lone links stay plain — tag them here so `.wknd-cta`
+ * in styles.css can style them.
+ * @param {Element} main The container element
+ */
+function decorateCtaButtons(main) {
+  main.querySelectorAll('.default-content-wrapper p > a[href]').forEach((a) => {
+    const p = a.closest('p');
+    // Only a paragraph whose sole content is the link (no surrounding text/img).
+    if (p.childElementCount !== 1 || a.querySelector('img')) return;
+    if (p.textContent.trim() !== a.textContent.trim()) return;
+    // Leave already-buttonized links (strong/em) to the global decorator.
+    if (a.classList.contains('button')) return;
+    p.classList.add('wknd-cta-wrapper');
+    a.classList.add('wknd-cta');
+  });
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   decorateIcons(main);
@@ -183,6 +204,7 @@ export function decorateMain(main) {
   decorateSectionMetadata(main);
   decorateBlocks(main);
   decorateButtons(main);
+  decorateCtaButtons(main);
 }
 
 /**

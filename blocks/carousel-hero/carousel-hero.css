@@ -158,7 +158,9 @@ main .carousel-hero-wrapper {
 
 /* stylelint-disable-next-line no-descending-specificity */
 .carousel-hero .carousel-hero-navigation-buttons button {
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 26px;
   height: 24px;
   margin: 0;
@@ -169,31 +171,28 @@ main .carousel-hero-wrapper {
   cursor: pointer;
 }
 
+/* Full arrows with a tail (← →), matching the source — not head-only chevrons. */
 .carousel-hero .carousel-hero-navigation-buttons button::after {
-  content: '';
   display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 13px;
-  height: 13px;
-  border: solid #000;
-  border-width: 2px 2px 0 0; /* top + right => chevron corner */
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+  color: #000;
 }
 
 .carousel-hero .carousel-hero-navigation-buttons button.slide-prev::after {
-  transform: translate(-25%, -50%) rotate(-135deg);
+  content: '\2190'; /* leftwards arrow */
 }
 
 .carousel-hero .carousel-hero-navigation-buttons button.slide-next::after {
-  transform: translate(-75%, -50%) rotate(45deg);
+  content: '\2192'; /* rightwards arrow */
 }
 
 /* --- Desktop --- */
 @media (width >= 900px) {
   /* source: content card 1192px wide (124px gutters), overlapping image bottom */
   .carousel-hero .carousel-hero-slide-content {
-    margin: -180px 124px 0;
+    margin: -180px 200px 0;
     padding: 18px 28px;
   }
 
