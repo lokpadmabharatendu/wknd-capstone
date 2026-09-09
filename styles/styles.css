@@ -364,10 +364,9 @@ main .section.grey {
   padding: 40px 0;
 }
 
-/* article body — narrow centered reading column with airy line-height;
-   images stay at the full content width (matches wknd.site articles).
-   Text elements are individually constrained + centered so image paragraphs
-   can still span the full width. */
+/* article body — narrow reading column with airy line-height, LEFT-aligned to
+   the content edge (matches wknd.site articles: body sits flush under the
+   title, not centered). Images stay at the full content width. */
 main .section.article-body .default-content-wrapper > h1,
 main .section.article-body .default-content-wrapper > h2,
 main .section.article-body .default-content-wrapper > h3,
@@ -377,10 +376,74 @@ main .section.article-body .default-content-wrapper > ol,
 main .section.article-body .default-content-wrapper > blockquote,
 main .section.article-body .default-content-wrapper > p:not(:has(picture)) {
   max-width: 776px;
-  margin-left: auto;
+  margin-left: 0;
   margin-right: auto;
 }
 
 main .section.article-body .default-content-wrapper > p:not(:has(picture)) {
   line-height: 45px;
+}
+
+/* stylelint-disable no-descending-specificity -- article-title rules grouped by component, not specificity */
+
+/* --- Article title block (breadcrumb + H1 + byline) ---
+   The article's title section is the default-content wrapper that holds both a
+   breadcrumb <ol> and the <h1>. Style it to match wknd.site. */
+
+/* Breadcrumb: inline row, no list numbers, uppercase, yellow separators. */
+main .default-content-wrapper:has(> ol):has(> h1) > ol {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+main .default-content-wrapper:has(> ol):has(> h1) > ol > li {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+main .default-content-wrapper:has(> ol):has(> h1) > ol > li + li::before {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin: 0 10px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid #ffea00; /* WKND yellow chevron separator */
+}
+
+main .default-content-wrapper:has(> ol):has(> h1) > ol a:any-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+main .default-content-wrapper:has(> ol):has(> h1) > ol a:hover {
+  text-decoration: underline;
+}
+
+/* Byline (the <h4> after the H1): small uppercase, not a heading size. */
+main .default-content-wrapper:has(> ol):has(> h1) > h4 {
+  margin: 12px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+/* Duplicate content-fragment title (the <h3> repeating the H1) — hidden on the
+   source, so suppress it here too. */
+main .default-content-wrapper:has(> ol):has(> h1) > h3 {
+  display: none;
 }
