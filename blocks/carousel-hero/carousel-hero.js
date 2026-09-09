@@ -1,46 +1,38 @@
-function updateActiveSlide(slide) {
-  const block = slide.closest('.carousel-hero');
-  const slideIndex = parseInt(slide.dataset.slideIndex, 10);
-  block.dataset.activeSlide = slideIndex;
+// WKND homepage hero carousel. Matches the source AEM core-component behavior:
+// slides are stacked in one box and swapped in place (opacity fade), NOT a
+// horizontal scroll-snap strip.
 
+function updateActiveSlide(block, slideIndex) {
+  block.dataset.activeSlide = slideIndex;
   const slides = block.querySelectorAll('.carousel-hero-slide');
 
-  slides.forEach((aSlide, idx) => {
-    aSlide.setAttribute('aria-hidden', idx !== slideIndex);
-    aSlide.querySelectorAll('a').forEach((link) => {
-      if (idx !== slideIndex) {
-        link.setAttribute('tabindex', '-1');
-      } else {
-        link.removeAttribute('tabindex');
-      }
+  slides.forEach((slide, idx) => {
+    const isActive = idx === slideIndex;
+    slide.classList.toggle('is-active', isActive);
+    slide.setAttribute('aria-hidden', !isActive);
+    slide.querySelectorAll('a').forEach((link) => {
+      if (isActive) link.removeAttribute('tabindex');
+      else link.setAttribute('tabindex', '-1');
     });
   });
 
-  const indicators = block.querySelectorAll('.carousel-hero-slide-indicator');
-  indicators.forEach((indicator, idx) => {
+  block.querySelectorAll('.carousel-hero-slide-indicator').forEach((indicator, idx) => {
     const button = indicator.querySelector('button');
-    if (idx !== slideIndex) {
-      button.removeAttribute('disabled');
-      button.removeAttribute('aria-current');
-    } else {
+    if (idx === slideIndex) {
       button.setAttribute('disabled', true);
       button.setAttribute('aria-current', true);
+    } else {
+      button.removeAttribute('disabled');
+      button.removeAttribute('aria-current');
     }
   });
 }
 
 export function showSlide(block, slideIndex = 0) {
   const slides = block.querySelectorAll('.carousel-hero-slide');
-  let realSlideIndex = slideIndex < 0 ? slides.length - 1 : slideIndex;
-  if (slideIndex >= slides.length) realSlideIndex = 0;
-  const activeSlide = slides[realSlideIndex];
-
-  activeSlide.querySelectorAll('a').forEach((link) => link.removeAttribute('tabindex'));
-  block.querySelector('.carousel-hero-slides').scrollTo({
-    top: 0,
-    left: activeSlide.offsetLeft,
-    behavior: 'smooth',
-  });
+  let realIndex = slideIndex < 0 ? slides.length - 1 : slideIndex;
+  if (slideIndex >= slides.length) realIndex = 0;
+  updateActiveSlide(block, realIndex);
 }
 
 function bindEvents(block) {
@@ -49,8 +41,8 @@ function bindEvents(block) {
 
   slideIndicators.querySelectorAll('button').forEach((button) => {
     button.addEventListener('click', (e) => {
-      const slideIndicator = e.currentTarget.parentElement;
-      showSlide(block, parseInt(slideIndicator.dataset.targetSlide, 10));
+      const indicator = e.currentTarget.parentElement;
+      showSlide(block, parseInt(indicator.dataset.targetSlide, 10));
     });
   });
 
@@ -59,15 +51,6 @@ function bindEvents(block) {
   });
   block.querySelector('.slide-next').addEventListener('click', () => {
     showSlide(block, parseInt(block.dataset.activeSlide, 10) + 1);
-  });
-
-  const slideObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) updateActiveSlide(entry.target);
-    });
-  }, { threshold: 0.5 });
-  block.querySelectorAll('.carousel-hero-slide').forEach((slide) => {
-    slideObserver.observe(slide);
   });
 }
 
@@ -144,6 +127,9 @@ export default async function decorate(block) {
 
   container.append(slidesWrapper);
   block.prepend(container);
+
+  // Show the first slide (in-place; no horizontal scroll).
+  updateActiveSlide(block, 0);
 
   if (!isSingleSlide) {
     bindEvents(block);
