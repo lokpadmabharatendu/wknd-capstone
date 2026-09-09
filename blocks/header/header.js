@@ -153,11 +153,25 @@ export default async function decorate(block) {
     links.setAttribute('aria-label', 'Main navigation');
     const ul = linksSec.querySelector('ul');
     if (ul) {
-      // WKND hides "Home" from the visible desktop nav (logo links home) and
-      // shows it only on mobile — tag it so CSS can match that behavior.
+      // Normalize the current path (drop locale prefix + .html) so it can be
+      // matched against each nav link's section.
+      const currentPath = window.location.pathname
+        .replace(/\.html?$/, '')
+        .replace(/\/$/, '');
       ul.querySelectorAll('li > a').forEach((a) => {
-        if (a.textContent.trim().toLowerCase() === 'home') {
+        const label = a.textContent.trim().toLowerCase();
+        // WKND hides "Home" from the visible desktop nav (logo links home) and
+        // shows it only on mobile — tag it so CSS can match that behavior.
+        if (label === 'home') {
           a.closest('li').classList.add('nav-home-item');
+        }
+        // Active/selected state: highlight the nav item whose section the
+        // current page falls under (e.g. Magazine stays lit on an article).
+        const linkPath = (a.getAttribute('href') || '').replace(/\.html?$/, '').replace(/\/$/, '');
+        const seg = linkPath.split('/').pop();
+        if (seg && label !== 'home' && (currentPath === linkPath || currentPath.includes(`/${seg}`))) {
+          a.closest('li').classList.add('nav-active');
+          a.setAttribute('aria-current', 'page');
         }
       });
       links.append(ul);
