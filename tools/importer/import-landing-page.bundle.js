@@ -129,6 +129,90 @@ var CustomImportScript = (() => {
     parseImageList(element, document2);
   }
 
+  // tools/importer/parsers/columns.js
+  function parse2(element, { document: document2 }) {
+    const teaser = element.querySelector(".cmp-teaser") || element;
+    const pretitle = teaser.querySelector(".cmp-teaser__pretitle");
+    const heading = teaser.querySelector(".cmp-teaser__title, h1, h2, h3");
+    const description = teaser.querySelector(".cmp-teaser__description, p:not(.cmp-teaser__pretitle)");
+    const cta = teaser.querySelector(".cmp-teaser__action-link, .cmp-teaser__action-container a, a");
+    const image = teaser.querySelector(".cmp-teaser__image img, .cmp-image img, img");
+    const textCell = [];
+    if (pretitle) textCell.push(pretitle);
+    if (heading) textCell.push(heading);
+    if (description) textCell.push(description);
+    if (cta) textCell.push(cta);
+    if (!textCell.length && !image) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+    const cells = [[textCell, image || ""]];
+    const block = WebImporter.Blocks.createBlock(document2, { name: "columns", cells });
+    element.replaceWith(block);
+  }
+
+  // tools/importer/parsers/secure-teasers.js
+  var SECURE_SELECTOR = ".teaser.cmp-teaser--list.cmp-teaser--secure";
+  function buildColumn(teaser, document2) {
+    const cell = [];
+    const heading = teaser.querySelector(".cmp-teaser__title, h1, h2, h3");
+    if (heading && heading.textContent.trim()) {
+      const h3 = document2.createElement("h3");
+      h3.textContent = heading.textContent.trim();
+      cell.push(h3);
+    }
+    const description = teaser.querySelector(".cmp-teaser__description");
+    if (description && description.textContent.trim()) {
+      const p = document2.createElement("p");
+      p.textContent = description.textContent.trim();
+      cell.push(p);
+    }
+    const actionLink = teaser.querySelector(".cmp-teaser__action-link, .cmp-teaser__action-container a");
+    const actionContainer = teaser.querySelector(".cmp-teaser__action-container");
+    const actionText = actionLink ? actionLink.textContent.trim() : actionContainer ? actionContainer.textContent.trim() : "";
+    if (actionText) {
+      const p = document2.createElement("p");
+      const href = actionLink ? actionLink.getAttribute("href") : null;
+      if (href) {
+        const a = document2.createElement("a");
+        a.setAttribute("href", href);
+        a.textContent = actionText;
+        p.append(a);
+      } else {
+        p.textContent = actionText;
+      }
+      cell.push(p);
+    }
+    const image = teaser.querySelector(".cmp-teaser__image img, .cmp-image img, img");
+    if (image) cell.push(image);
+    return cell;
+  }
+  function parse3(element, { document: document2 }) {
+    const parent = element.parentElement;
+    let group = parent ? Array.from(parent.querySelectorAll(`:scope > ${SECURE_SELECTOR}`)) : [];
+    if (!group.includes(element)) {
+      group = parent ? Array.from(parent.querySelectorAll(SECURE_SELECTOR)) : [];
+    }
+    if (!group.includes(element)) group = [element];
+    if (group[0] !== element) {
+      element.remove();
+      return;
+    }
+    const columns = group.map((teaser) => buildColumn(teaser, document2)).filter((c) => c.length);
+    if (!columns.length) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+    const cells = [columns];
+    const block = WebImporter.Blocks.createBlock(document2, {
+      name: "columns",
+      variants: ["secure"],
+      cells
+    });
+    element.replaceWith(block);
+    group.slice(1).forEach((teaser) => teaser.remove());
+  }
+
   // tools/importer/transformers/wknd-cleanup.js
   var TransformHook = { beforeTransform: "beforeTransform", afterTransform: "afterTransform" };
   function transform(hookName, element, payload) {
@@ -217,17 +301,30 @@ var CustomImportScript = (() => {
       "https://wknd.site/us/en/about-us.html"
     ],
     blocks: [
+      // Featured Article teaser (magazine listing) → columns block: image-left,
+      // text-right in a grey panel (same treatment as the homepage featured teaser).
+      { name: "columns", instances: [".teaser.cmp-teaser--featured"] },
+      // Members Only "secure" teasers (magazine listing) → a single 2-up columns
+      // block built by the secure-teasers parser from the sibling group.
+      { name: "secure-teasers", instances: [".teaser.cmp-teaser--list.cmp-teaser--secure"] },
       // Two card sources on landing pages: about-us uses contributor experience
       // fragments; the magazine listing uses an image-list ("All Articles" grid).
       // cards.js parseImageList handles the image-list branch.
       { name: "cards", instances: ["section.experiencefragment.cmp-experience-fragment--contributor", ".image-list.list"] }
     ],
     sections: [
-      { id: "s1", name: "landing-body", selector: "main.cmp-layout-container--fixed", style: null, blocks: ["cards"], defaultContent: [".cmp-title__text", ".cmp-text"] }
+      { id: "s1", name: "landing-body", selector: "main.cmp-layout-container--fixed", style: null, blocks: ["columns", "secure-teasers", "cards"], defaultContent: [".cmp-title__text", ".cmp-text"] },
+      // Grey panel behind the Featured Article teaser (matches the source + homepage).
+      { id: "s2", name: "featured-article", selector: ".teaser.cmp-teaser--featured", style: "grey", blocks: ["columns"], defaultContent: [] },
+      // Plain section starting at "All Articles" — closes the grey featured panel
+      // so the article grid + Members Only render on the default white background.
+      { id: "s3", name: "all-articles", selector: ".title.cmp-title--underline", style: null, blocks: [], defaultContent: [".cmp-title__text"] }
     ]
   };
   var parsers = {
-    cards: parse
+    cards: parse,
+    columns: parse2,
+    "secure-teasers": parse3
   };
   var transformers = [
     transform,

@@ -126,3 +126,95 @@ main .columns > div > div:not(.columns-img-col) a.button:any-link:focus-visible 
     height: 100%;
   }
 }
+
+/* stylelint-disable no-descending-specificity -- secure-variant rules are grouped by component, not specificity */
+
+/* ---- "secure" variant: Members Only gated teasers ----
+   Each column stacks title, description, a disabled Read More, then the image.
+   A yellow corner flag with a padlock marks the locked content (matches the
+   source cmp-teaser--secure badge). No grey panel, no wider image column. */
+.columns.secure > div > div {
+  order: unset;
+  flex: 1 1 0%;
+  position: relative;
+  padding: 0;
+}
+
+/* Column title */
+.columns.secure > div > div h3 {
+  margin: 0 0 8px;
+  padding-left: 44px; /* clear the corner badge */
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 27px;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+.columns.secure > div > div p {
+  margin: 0 0 16px;
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  line-height: 21px;
+  color: rgb(105 105 105);
+}
+
+/* Disabled "Read More" — grey pill, not a link (source: gated content).
+   It is the text paragraph immediately preceding the image paragraph
+   (image is always the last child; Read More is the 2nd-to-last). */
+.columns.secure > div > div > p:has(+ p picture) {
+  display: inline-block;
+  margin: 0 0 20px;
+  padding: 7px 14px;
+  background-color: #ebebeb;
+  color: rgb(105 105 105);
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  cursor: default;
+}
+
+.columns.secure > div > div p:has(picture) {
+  margin: 0;
+}
+
+.columns.secure > div > div img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Yellow corner flag (top-left) */
+.columns.secure > div > div::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  background-image: linear-gradient(to left top, rgb(255 255 255 / 0%) 0, rgb(255 255 255 / 0%) 50%, #ffea00 50%, #ffea00 100%);
+  z-index: 2;
+}
+
+/* Padlock glyph over the flag */
+.columns.secure > div > div::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  background-color: #202020;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3H9z"/></svg>');
+  z-index: 3;
+}
+
+@media (width >= 900px) {
+  .columns.secure > div > div {
+    padding: 0;
+  }
+}
