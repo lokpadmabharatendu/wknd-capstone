@@ -29,10 +29,10 @@ header .nav-utility-inner {
 
 header .nav-signin a,
 header .nav-locale-toggle {
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  color: #f7f7f7;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: normal;
   text-transform: uppercase;
   text-decoration: none;
 }
@@ -242,8 +242,8 @@ header .nav-links a {
   padding: 12px 0;
   color: #202020;
   font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 400;
+  letter-spacing: normal;
   text-transform: uppercase;
   text-decoration: none;
 }
@@ -261,14 +261,18 @@ header .nav-search {
 header .nav-search input {
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 14px;
+  padding: 10px 14px 10px 38px;
   border: 0;
   background-color: rgb(235 235 235 / 54%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23202020" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 16px 16px;
   color: #202020;
   font: inherit;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 header .nav-search input::placeholder {
@@ -317,16 +321,19 @@ header .nav-search input::placeholder {
 
   header .nav-links ul {
     flex-direction: row;
-    gap: 28px;
+    gap: 0;
   }
 
   header .nav-links a {
     width: auto;
-    padding: 0;
+    padding: 15px 17px;
     font-size: 14px;
   }
 
   header .nav-search input {
     width: 180px;
+    padding: 8px 32px;
+    font-family: arial, "Helvetica Neue", helvetica, sans-serif;
+    background-position: 12px center;
   }
 }

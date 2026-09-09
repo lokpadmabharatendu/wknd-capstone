@@ -44,16 +44,16 @@ footer .footer-nav ul {
 }
 
 footer .footer-nav a {
-  color: #fff;
+  color: #ebebeb;
   font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 400;
+  letter-spacing: normal;
   text-transform: uppercase;
   text-decoration: none;
 }
 
 footer .footer-nav a:hover {
-  color: var(--link-color);
+  color: #fff;
 }
 
 /* Social */
@@ -97,9 +97,9 @@ footer .footer-social-list img {
 /* Legal band */
 footer .footer-legal {
   padding: 8px 0 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #fff;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #f7f7f7;
 }
 
 footer .footer-legal p {
@@ -107,8 +107,12 @@ footer .footer-legal p {
 }
 
 footer .footer-legal a {
-  color: var(--link-color);
+  color: #f7f7f7;
   text-decoration: underline;
+}
+
+footer .footer-legal a:hover {
+  color: #fff;
 }
 
 /* ---- Desktop (>= 900px) ---- */
