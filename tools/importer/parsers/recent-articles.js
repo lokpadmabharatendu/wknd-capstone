@@ -43,18 +43,26 @@ function localeFromUrl(params) {
 }
 
 export default function parse(element, { document, params }) {
-  // Guard: only convert the Recent Articles instance. Its section is preceded
-  // by an underline title; the adventures image-list is not. If this instance
-  // is not the Recent Articles one, leave it untouched for the cards parser.
+  // Guard: only convert an image-list preceded by an underline title. On the
+  // homepage that's "Recent Articles"; on the magazine listing it's "All
+  // Articles". Other image-lists (e.g. the adventures grid) are left for the
+  // cards parser.
   const prev = element.previousElementSibling;
-  const isRecentArticles = prev
+  const isUnderlineTitled = prev
     && prev.classList
     && prev.classList.contains('cmp-title--underline');
-  if (!isRecentArticles) return;
+  if (!isUnderlineTitled) return;
 
   const locale = localeFromUrl(params);
   const cells = {};
   if (locale) cells.filter = `${locale}/magazine/`;
+
+  // "All Articles" (magazine listing) should list every article, not just the
+  // latest few. The homepage "Recent Articles" keeps the default cap (4).
+  const titleText = (prev.textContent || '').trim().toLowerCase();
+  if (titleText.includes('all articles')) {
+    cells.limit = '100';
+  }
 
   const block = WebImporter.Blocks.createBlock(document, {
     name: 'recent-articles',

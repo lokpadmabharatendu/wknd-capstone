@@ -2,13 +2,13 @@
   "status": "success",
   "url": "https://wknd.site/ca/en/magazine.html",
   "path": "ca/en/magazine",
-  "timestamp": "2026-09-09T19:14:25.327Z",
+  "timestamp": "2026-09-17T17:39:08.223Z",
   "title": "Magazine",
   "template": "landing-page",
   "blocks": [
     "columns",
     "secure-teasers",
     "secure-teasers",
-    "cards"
+    "recent-articles"
   ]
 }
