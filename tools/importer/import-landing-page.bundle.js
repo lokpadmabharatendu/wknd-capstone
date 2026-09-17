@@ -213,6 +213,36 @@ var CustomImportScript = (() => {
     group.slice(1).forEach((teaser) => teaser.remove());
   }
 
+  // tools/importer/parsers/recent-articles.js
+  function localeFromUrl(params) {
+    const src = params && (params.originalURL || params.url) || "";
+    try {
+      const path = new URL(src).pathname.replace(/\/$/, "").replace(/\.html?$/, "");
+      const segs = path.split("/").filter(Boolean);
+      if (segs.length >= 2) return `/${segs[0]}/${segs[1]}`;
+      if (segs.length === 1) return `/${segs[0]}`;
+    } catch (e) {
+    }
+    return "";
+  }
+  function parse4(element, { document: document2, params }) {
+    const prev = element.previousElementSibling;
+    const isUnderlineTitled = prev && prev.classList && prev.classList.contains("cmp-title--underline");
+    if (!isUnderlineTitled) return;
+    const locale = localeFromUrl(params);
+    const cells = {};
+    if (locale) cells.filter = `${locale}/magazine/`;
+    const titleText = (prev.textContent || "").trim().toLowerCase();
+    if (titleText.includes("all articles")) {
+      cells.limit = "100";
+    }
+    const block = WebImporter.Blocks.createBlock(document2, {
+      name: "recent-articles",
+      cells
+    });
+    element.replaceWith(block);
+  }
+
   // tools/importer/transformers/wknd-cleanup.js
   var TransformHook = { beforeTransform: "beforeTransform", afterTransform: "afterTransform" };
   function transform(hookName, element, payload) {
@@ -307,24 +337,30 @@ var CustomImportScript = (() => {
       // Members Only "secure" teasers (magazine listing) → a single 2-up columns
       // block built by the secure-teasers parser from the sibling group.
       { name: "secure-teasers", instances: [".teaser.cmp-teaser--list.cmp-teaser--secure"] },
-      // Two card sources on landing pages: about-us uses contributor experience
-      // fragments; the magazine listing uses an image-list ("All Articles" grid).
+      // "All Articles" image-list (magazine listing) → DYNAMIC recent-articles
+      // block: reads the query-index at runtime so newly published articles appear
+      // automatically. Must precede `cards` so it claims this image-list first
+      // (the recent-articles parser only converts the underline-title instance).
+      { name: "recent-articles", instances: [".title.cmp-title--underline + .image-list.list"] },
+      // Remaining card sources on landing pages: about-us uses contributor
+      // experience fragments (any leftover image-list still falls back to cards).
       // cards.js parseImageList handles the image-list branch.
       { name: "cards", instances: ["section.experiencefragment.cmp-experience-fragment--contributor", ".image-list.list"] }
     ],
     sections: [
-      { id: "s1", name: "landing-body", selector: "main.cmp-layout-container--fixed", style: null, blocks: ["columns", "secure-teasers", "cards"], defaultContent: [".cmp-title__text", ".cmp-text"] },
+      { id: "s1", name: "landing-body", selector: "main.cmp-layout-container--fixed", style: null, blocks: ["columns", "secure-teasers", "recent-articles", "cards"], defaultContent: [".cmp-title__text", ".cmp-text"] },
       // Grey panel behind the Featured Article teaser (matches the source + homepage).
       { id: "s2", name: "featured-article", selector: ".teaser.cmp-teaser--featured", style: "grey", blocks: ["columns"], defaultContent: [] },
       // Plain section starting at "All Articles" — closes the grey featured panel
       // so the article grid + Members Only render on the default white background.
-      { id: "s3", name: "all-articles", selector: ".title.cmp-title--underline", style: null, blocks: [], defaultContent: [".cmp-title__text"] }
+      { id: "s3", name: "all-articles", selector: ".title.cmp-title--underline", style: null, blocks: ["recent-articles"], defaultContent: [".cmp-title__text"] }
     ]
   };
   var parsers = {
     cards: parse,
     columns: parse2,
-    "secure-teasers": parse3
+    "secure-teasers": parse3,
+    "recent-articles": parse4
   };
   var transformers = [
     transform,
