@@ -84,32 +84,36 @@ function buildCardsBlock(panel, document) {
   return WebImporter.Blocks.createBlock(document, { name: 'cards', cells: cardRows });
 }
 
-export default function parse(element, { document }) {
-  const labels = Array.from(
-    element.querySelectorAll('.cmp-tabs__tablist .cmp-tabs__tab, ol.cmp-tabs__tablist > li'),
-  );
-  const panels = Array.from(element.querySelectorAll('.cmp-tabs__tabpanel'));
-
-  const cells = [];
-
-  labels.forEach((label, i) => {
-    const panel = panels[i];
-    const labelText = label ? label.textContent.trim() : '';
-
-    const cardsBlock = buildCardsBlock(panel, document);
-
-    // Skip a tab only if it has neither a label nor any card content.
-    if (!labelText && !cardsBlock) return;
-
-    cells.push([labelText, cardsBlock || '']);
-  });
-
-  // Empty-block guard: no tabs means nothing to import.
-  if (!cells.length) {
-    element.replaceWith(...element.childNodes);
-    return;
+/** Derive the locale prefix (e.g. "/us/en") from the source URL path. */
+function localeFromUrl(params) {
+  const src = (params && (params.originalURL || params.url)) || '';
+  try {
+    const path = new URL(src).pathname.replace(/\/$/, '').replace(/\.html?$/, '');
+    const segs = path.split('/').filter(Boolean);
+    if (segs.length >= 2) return `/${segs[0]}/${segs[1]}`;
+    if (segs.length === 1) return `/${segs[0]}`;
+  } catch (e) {
+    /* fall through */
   }
+  return '';
+}
 
+/**
+ * The adventures "Current Adventures" tabs are now DYNAMIC: instead of
+ * enumerating the source tab tables, emit a small config block so the
+ * tabs-listing block builds tabs at runtime from the query-index —
+ *
+ *   | tabs-listing            |
+ *   | filter | /us/en/adventures/ |
+ *
+ * The block fetches /query-index.json, filters to the locale's /adventures/
+ * detail pages, groups by the `activity` field, and renders an "All" tab plus
+ * one tab per activity. Newly published adventures (and new activities) appear
+ * automatically without re-importing this listing page.
+ */
+export default function parse(element, { document, params }) {
+  const locale = localeFromUrl(params);
+  const cells = { filter: `${locale || ''}/adventures/` };
   const block = WebImporter.Blocks.createBlock(document, { name: 'tabs-listing', cells });
   element.replaceWith(block);
 }

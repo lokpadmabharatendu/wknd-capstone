@@ -1,26 +1,8 @@
-/* eslint-disable */
 var CustomImportScript = (() => {
   var __defProp = Object.defineProperty;
-  var __defProps = Object.defineProperties;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __propIsEnum = Object.prototype.propertyIsEnumerable;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __spreadValues = (a, b) => {
-    for (var prop in b || (b = {}))
-      if (__hasOwnProp.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    if (__getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(b)) {
-        if (__propIsEnum.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      }
-    return a;
-  };
-  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
@@ -64,64 +46,20 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/tabs-listing.js
-  function buildCardsBlock(panel, document2) {
-    if (!panel) return null;
-    const items = Array.from(
-      panel.querySelectorAll(".cmp-image-list__item, li.cmp-image-list__item")
-    );
-    if (!items.length) return null;
-    const cardRows = [];
-    items.forEach((item) => {
-      const img = item.querySelector(
-        ".cmp-image-list__item-image img, .cmp-image__image, img"
-      );
-      const titleLink = item.querySelector(".cmp-image-list__item-title-link");
-      const titleText = item.querySelector(".cmp-image-list__item-title");
-      const descEl = item.querySelector(".cmp-image-list__item-description");
-      const label = titleText || titleLink;
-      const labelStr = label ? label.textContent.trim() : "";
-      if (!img && !labelStr && !(descEl && descEl.textContent.trim())) return;
-      const bodyCell = [];
-      if (labelStr) {
-        const h3 = document2.createElement("h3");
-        const href = titleLink ? titleLink.getAttribute("href") : null;
-        if (href) {
-          const a = document2.createElement("a");
-          a.setAttribute("href", href);
-          a.textContent = labelStr;
-          h3.append(a);
-        } else {
-          h3.textContent = labelStr;
-        }
-        bodyCell.push(h3);
-      }
-      if (descEl && descEl.textContent.trim()) {
-        const p = document2.createElement("p");
-        p.textContent = descEl.textContent.trim();
-        bodyCell.push(p);
-      }
-      cardRows.push([img || "", bodyCell.length ? bodyCell : ""]);
-    });
-    if (!cardRows.length) return null;
-    return WebImporter.Blocks.createBlock(document2, { name: "cards", cells: cardRows });
-  }
-  function parse2(element, { document: document2 }) {
-    const labels = Array.from(
-      element.querySelectorAll(".cmp-tabs__tablist .cmp-tabs__tab, ol.cmp-tabs__tablist > li")
-    );
-    const panels = Array.from(element.querySelectorAll(".cmp-tabs__tabpanel"));
-    const cells = [];
-    labels.forEach((label, i) => {
-      const panel = panels[i];
-      const labelText = label ? label.textContent.trim() : "";
-      const cardsBlock = buildCardsBlock(panel, document2);
-      if (!labelText && !cardsBlock) return;
-      cells.push([labelText, cardsBlock || ""]);
-    });
-    if (!cells.length) {
-      element.replaceWith(...element.childNodes);
-      return;
+  function localeFromUrl(params) {
+    const src = params && (params.originalURL || params.url) || "";
+    try {
+      const path = new URL(src).pathname.replace(/\/$/, "").replace(/\.html?$/, "");
+      const segs = path.split("/").filter(Boolean);
+      if (segs.length >= 2) return `/${segs[0]}/${segs[1]}`;
+      if (segs.length === 1) return `/${segs[0]}`;
+    } catch (e) {
     }
+    return "";
+  }
+  function parse2(element, { document: document2, params }) {
+    const locale = localeFromUrl(params);
+    const cells = { filter: `${locale || ""}/adventures/` };
     const block = WebImporter.Blocks.createBlock(document2, { name: "tabs-listing", cells });
     element.replaceWith(block);
   }
@@ -230,7 +168,7 @@ var CustomImportScript = (() => {
     ...PAGE_TEMPLATE.sections && PAGE_TEMPLATE.sections.length > 1 ? [transform2] : []
   ];
   function executeTransformers(hookName, element, payload) {
-    const enhancedPayload = __spreadProps(__spreadValues({}, payload), { template: PAGE_TEMPLATE });
+    const enhancedPayload = { ...payload, template: PAGE_TEMPLATE };
     transformers.forEach((transformerFn) => {
       try {
         transformerFn.call(null, hookName, element, enhancedPayload);

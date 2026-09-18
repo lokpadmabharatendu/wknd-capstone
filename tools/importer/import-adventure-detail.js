@@ -105,6 +105,29 @@ export default {
     const { document, url, params } = payload;
     const main = document.body;
 
+    // 0. Capture the Activity value BEFORE parsers run (the table-specs parser
+    // replaces the content-fragment element). The source exposes it on a stable
+    // class; fall back to matching the "Activity" label row. Emitted as an
+    // `Activity` metadata row below so the query-index can carry an `activity`
+    // column and the adventures listing can group by it.
+    let activityValue = '';
+    const activityEl = document.querySelector(
+      '.cmp-contentfragment__element--activity .cmp-contentfragment__element-value',
+    );
+    if (activityEl) {
+      activityValue = activityEl.textContent.trim();
+    } else {
+      const els = document.querySelectorAll('.cmp-contentfragment__element');
+      els.forEach((el) => {
+        if (activityValue) return;
+        const t = el.querySelector('.cmp-contentfragment__element-title, dt');
+        const v = el.querySelector('.cmp-contentfragment__element-value, dd');
+        if (t && v && t.textContent.trim().toLowerCase() === 'activity') {
+          activityValue = v.textContent.trim();
+        }
+      });
+    }
+
     // 1. beforeTransform (initial cleanup)
     executeTransformers('beforeTransform', main, payload);
 
@@ -135,6 +158,25 @@ export default {
     WebImporter.rules.createMetadata(main, document);
     WebImporter.rules.transformBackgroundImages(main, document);
     WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
+
+    // 5b. Append an "Activity" row to the Metadata block (the last <table>
+    // created by createMetadata) so the published page emits <meta name="activity">
+    // and the query-index can group adventures by activity.
+    if (activityValue) {
+      const tables = main.querySelectorAll('table');
+      const metaTable = tables[tables.length - 1];
+      if (metaTable) {
+        const tr = document.createElement('tr');
+        const keyCell = document.createElement('td');
+        keyCell.textContent = 'Activity';
+        const valCell = document.createElement('td');
+        const valP = document.createElement('p');
+        valP.textContent = activityValue;
+        valCell.append(valP);
+        tr.append(keyCell, valCell);
+        (metaTable.querySelector('tbody') || metaTable).appendChild(tr);
+      }
+    }
 
     // 6. Generate sanitized path
     const rawPath = new URL(params.originalURL).pathname
