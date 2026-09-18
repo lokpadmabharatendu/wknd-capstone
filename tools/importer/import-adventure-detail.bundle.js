@@ -1,26 +1,8 @@
-/* eslint-disable */
 var CustomImportScript = (() => {
   var __defProp = Object.defineProperty;
-  var __defProps = Object.defineProperties;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __propIsEnum = Object.prototype.propertyIsEnumerable;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __spreadValues = (a, b) => {
-    for (var prop in b || (b = {}))
-      if (__hasOwnProp.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    if (__getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(b)) {
-        if (__propIsEnum.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      }
-    return a;
-  };
-  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
@@ -130,6 +112,10 @@ var CustomImportScript = (() => {
         "meta",
         "link",
         "noscript"
+      ]);
+      WebImporter.DOMUtils.remove(element, [
+        "div.experiencefragment",
+        "aside.cmp-layoutcontainer--sidebar"
       ]);
       element.querySelectorAll(".title .cmp-title__text").forEach((el) => {
         if (el.textContent.trim() === "Share this Adventure") {
@@ -246,7 +232,7 @@ var CustomImportScript = (() => {
     ...PAGE_TEMPLATE.sections && PAGE_TEMPLATE.sections.length > 1 ? [transform2] : []
   ];
   function executeTransformers(hookName, element, payload) {
-    const enhancedPayload = __spreadProps(__spreadValues({}, payload), { template: PAGE_TEMPLATE });
+    const enhancedPayload = { ...payload, template: PAGE_TEMPLATE };
     transformers.forEach((transformerFn) => {
       try {
         transformerFn.call(null, hookName, element, enhancedPayload);
@@ -283,6 +269,23 @@ var CustomImportScript = (() => {
     transform: (payload) => {
       const { document: document2, url, params } = payload;
       const main = document2.body;
+      let activityValue = "";
+      const activityEl = document2.querySelector(
+        ".cmp-contentfragment__element--activity .cmp-contentfragment__element-value"
+      );
+      if (activityEl) {
+        activityValue = activityEl.textContent.trim();
+      } else {
+        const els = document2.querySelectorAll(".cmp-contentfragment__element");
+        els.forEach((el) => {
+          if (activityValue) return;
+          const t = el.querySelector(".cmp-contentfragment__element-title, dt");
+          const v = el.querySelector(".cmp-contentfragment__element-value, dd");
+          if (t && v && t.textContent.trim().toLowerCase() === "activity") {
+            activityValue = v.textContent.trim();
+          }
+        });
+      }
       executeTransformers("beforeTransform", main, payload);
       const pageBlocks = findBlocksOnPage(document2, PAGE_TEMPLATE);
       pageBlocks.forEach((block) => {
@@ -304,6 +307,21 @@ var CustomImportScript = (() => {
       WebImporter.rules.createMetadata(main, document2);
       WebImporter.rules.transformBackgroundImages(main, document2);
       WebImporter.rules.adjustImageUrls(main, url, params.originalURL);
+      if (activityValue) {
+        const tables = main.querySelectorAll("table");
+        const metaTable = tables[tables.length - 1];
+        if (metaTable) {
+          const tr = document2.createElement("tr");
+          const keyCell = document2.createElement("td");
+          keyCell.textContent = "Activity";
+          const valCell = document2.createElement("td");
+          const valP = document2.createElement("p");
+          valP.textContent = activityValue;
+          valCell.append(valP);
+          tr.append(keyCell, valCell);
+          (metaTable.querySelector("tbody") || metaTable).appendChild(tr);
+        }
+      }
       const rawPath = new URL(params.originalURL).pathname.replace(/\/$/, "").replace(/\.html?$/, "");
       const path = WebImporter.FileUtils.sanitizePath(rawPath === "" ? "/index" : rawPath);
       return [{
