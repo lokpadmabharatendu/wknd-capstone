@@ -42,24 +42,34 @@ function localeFromUrl(params) {
   return '';
 }
 
+/**
+ * Detect the content section this image-list belongs to from its first card
+ * link — "magazine" or "adventures". More robust than the title text/underline
+ * guard, and lets one parser serve both homepage grids + the magazine listing.
+ */
+function sectionFromCards(element) {
+  const links = Array.from(element.querySelectorAll('a[href]'));
+  for (const a of links) {
+    const href = a.getAttribute('href') || '';
+    const m = href.match(/\/(magazine|adventures)\//);
+    if (m) return m[1];
+  }
+  return '';
+}
+
 export default function parse(element, { document, params }) {
-  // Guard: only convert an image-list preceded by an underline title. On the
-  // homepage that's "Recent Articles"; on the magazine listing it's "All
-  // Articles". Other image-lists (e.g. the adventures grid) are left for the
-  // cards parser.
-  const prev = element.previousElementSibling;
-  const isUnderlineTitled = prev
-    && prev.classList
-    && prev.classList.contains('cmp-title--underline');
-  if (!isUnderlineTitled) return;
-
   const locale = localeFromUrl(params);
-  const cells = {};
-  if (locale) cells.filter = `${locale}/magazine/`;
+  // Section derived from the card links (magazine vs adventures). If none can
+  // be determined, fall back to magazine (the original Recent Articles use).
+  const section = sectionFromCards(element) || 'magazine';
 
-  // "All Articles" (magazine listing) should list every article, not just the
-  // latest few. The homepage "Recent Articles" keeps the default cap (4).
-  const titleText = (prev.textContent || '').trim().toLowerCase();
+  const cells = {};
+  if (locale) cells.filter = `${locale}/${section}/`;
+
+  // "All Articles" (magazine listing) lists every article; the homepage grids
+  // ("Recent Articles", "Where do you want to go?") keep the default cap (4).
+  const prev = element.previousElementSibling;
+  const titleText = (prev && prev.textContent ? prev.textContent : '').trim().toLowerCase();
   if (titleText.includes('all articles')) {
     cells.limit = '100';
   }
