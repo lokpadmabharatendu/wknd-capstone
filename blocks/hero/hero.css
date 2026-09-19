@@ -27,9 +27,13 @@
   object-position: 50% 100%; /* source anchors the hero image to the bottom */
 }
 
-/* Row 2: white content box, pulled up over the image bottom and centered. */
+/* Row 2: white content box, pulled up over the image bottom and centered.
+   box-sizing: border-box keeps the total box width capped at the 1200px content
+   frame (padding inside), so the title/description align to the same left edge
+   as the rest of the page instead of sitting ~32px further left. */
 .hero > div:last-child {
   position: relative;
+  box-sizing: border-box;
   max-width: 1200px;
   margin: -32px auto 0;
   padding: 8px 28px 24px;
