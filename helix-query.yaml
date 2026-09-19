@@ -1,0 +1,42 @@
+# Query-index definition for the WKND capstone site.
+#
+# SOURCE OF TRUTH: the LIVE index configuration lives at tools.aem.live. This
+# file is committed to VERSION and DOCUMENT that definition alongside the code
+# that depends on it — it is the canonical, reviewable reference, not (by
+# itself) the runtime config. Keep the two in sync: any column change made at
+# tools.aem.live should be mirrored here in the same PR.
+#
+# Consumed by the dynamic blocks that fetch /query-index.json and filter
+# client-side by path:
+#   - blocks/recent-articles  (path, title, image, description; sort date -> lastModified)
+#   - blocks/tabs-listing      (path, title, image, description, lastModified; group by activity)
+#   - blocks/hero              (path, title, description; lookup by path)
+version: 1
+
+indices:
+  default:
+    include:
+      - '/**'
+    exclude:
+      - '/drafts/**'
+      - '/tools/**'
+    target: /query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, 'content')
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, 'content')
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, 'content')
+      date:
+        select: head > meta[name="date"]
+        value: attribute(el, 'content')
+      activity:
+        select: head > meta[name="activity"]
+        value: attribute(el, 'content')
+      lastModified:
+        select: none
+        value: parseTimestamp(headers('last-modified'), 'EEE, dd MMM yyyy HH:mm:ss zzz')
