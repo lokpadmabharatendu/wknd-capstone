@@ -23,18 +23,18 @@ const PAGE_TEMPLATE = {
     { name: 'carousel-hero', instances: ['.carousel.panelcontainer.cmp-carousel--hero'] },
     { name: 'columns', instances: ['.teaser.cmp-teaser--featured'] },
     { name: 'hero', instances: ['.teaser.cmp-teaser--hero.cmp-teaser--imagebottom', '.teaser.cmp-teaser--hero'] },
-    // recent-articles must precede cards: the Recent Articles image-list (the
-    // one adjacent to the underline title) is claimed here first, so the cards
-    // parser below only picks up the remaining "Where do you want to go?" grid.
-    { name: 'recent-articles', instances: ['.title.cmp-title--underline + .image-list.list'] },
-    { name: 'cards', instances: ['.image-list.list'] },
+    // Both homepage image-lists are DYNAMIC recent-articles blocks: "Recent
+    // Articles" (magazine) and "Where do you want to go?" (adventures). The
+    // recent-articles parser self-detects the section from each grid's card
+    // links and emits the matching /{locale}/{section}/ filter.
+    { name: 'recent-articles', instances: ['.image-list.list'] },
   ],
   sections: [
     { id: 's1', name: 'hero-carousel', selector: '.carousel.panelcontainer.cmp-carousel--hero', style: null, blocks: ['carousel-hero'], defaultContent: [] },
     { id: 's2', name: 'featured-article', selector: '.teaser.cmp-teaser--featured', style: 'grey', blocks: ['columns'], defaultContent: [] },
     { id: 's3', name: 'recent-articles', selector: '.title.cmp-title--underline', style: null, blocks: ['recent-articles'], defaultContent: ['.cmp-title__text'] },
     { id: 's4', name: 'next-adventures-hero', selector: '.teaser.cmp-teaser--hero.cmp-teaser--imagebottom', style: null, blocks: ['hero'], defaultContent: ['.cmp-title__text'] },
-    { id: 's5', name: 'where-to-go-adventures', selector: '.title:not(.cmp-title--underline)', style: null, blocks: ['cards'], defaultContent: ['.cmp-title__text'] },
+    { id: 's5', name: 'where-to-go-adventures', selector: '.title:not(.cmp-title--underline)', style: null, blocks: ['recent-articles'], defaultContent: ['.cmp-title__text'] },
   ],
 };
 
