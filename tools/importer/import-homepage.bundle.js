@@ -72,6 +72,15 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/parsers/hero.js
+  function toRelativePath(href) {
+    if (!href) return "";
+    try {
+      const u = new URL(href, "https://wknd.site");
+      return u.pathname.replace(/\.html?$/, "");
+    } catch (e) {
+      return href.replace(/\.html?$/, "");
+    }
+  }
   function parse3(element, { document: document2 }) {
     const teaser = element.querySelector(".cmp-teaser") || element;
     const image = teaser.querySelector(".cmp-teaser__image img, .cmp-image img, img");
@@ -80,6 +89,16 @@ var CustomImportScript = (() => {
     const cta = teaser.querySelector(".cmp-teaser__action-link, .cmp-teaser__action-container a, a");
     if (!heading && !description && !image) {
       element.replaceWith(...element.childNodes);
+      return;
+    }
+    const ctaHref = cta ? cta.getAttribute("href") : "";
+    const refPath = toRelativePath(ctaHref);
+    if (/\/adventures\/[^/]+$/.test(refPath)) {
+      const link = document2.createElement("a");
+      link.setAttribute("href", refPath);
+      link.textContent = refPath;
+      const block2 = WebImporter.Blocks.createBlock(document2, { name: "hero", cells: [[link]] });
+      element.replaceWith(block2);
       return;
     }
     const cells = [];
@@ -213,11 +232,15 @@ var CustomImportScript = (() => {
   }
   function parse5(element, { document: document2, params }) {
     const prev = element.previousElementSibling;
-    const isRecentArticles = prev && prev.classList && prev.classList.contains("cmp-title--underline");
-    if (!isRecentArticles) return;
+    const isUnderlineTitled = prev && prev.classList && prev.classList.contains("cmp-title--underline");
+    if (!isUnderlineTitled) return;
     const locale = localeFromUrl(params);
     const cells = {};
     if (locale) cells.filter = `${locale}/magazine/`;
+    const titleText = (prev.textContent || "").trim().toLowerCase();
+    if (titleText.includes("all articles")) {
+      cells.limit = "100";
+    }
     const block = WebImporter.Blocks.createBlock(document2, {
       name: "recent-articles",
       cells
