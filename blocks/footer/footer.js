@@ -3,12 +3,16 @@
 // Content comes from /content/footer.plain.html; this JS reads and renders it.
 
 /**
- * Fetch the footer fragment. Metadata-independent dual-fetch:
- * /content first (localhost / aem up), then root (DA/EDS production).
+ * Fetch the footer fragment. Metadata-independent dual-fetch, ordered by the
+ * current path so we don't log a 404 for the wrong environment: under /content
+ * (local `aem up`) try /content first; on production (root paths) try / first.
  */
 async function fetchFooter() {
-  let resp = await fetch('/content/footer.plain.html');
-  if (!resp.ok) resp = await fetch('/footer.plain.html');
+  const candidates = window.location.pathname.startsWith('/content/')
+    ? ['/content/footer.plain.html', '/footer.plain.html']
+    : ['/footer.plain.html', '/content/footer.plain.html'];
+  let resp = await fetch(candidates[0]);
+  if (!resp.ok) resp = await fetch(candidates[1]);
   if (!resp.ok) return null;
   const html = await resp.text();
   const container = document.createElement('div');
