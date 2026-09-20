@@ -108,7 +108,12 @@ function renderHero(block, data) {
   const imageRow = document.createElement('div');
   const imageCell = document.createElement('div');
   if (data.image) {
-    imageCell.append(createOptimizedPicture(data.image, data.alt || data.title, false, [{ width: '1600' }]));
+    imageCell.append(createOptimizedPicture(
+      data.image,
+      data.alt || data.title,
+      false,
+      [{ media: '(min-width: 900px)', width: '1600' }, { width: '750' }],
+    ));
   }
   imageRow.append(imageCell);
 

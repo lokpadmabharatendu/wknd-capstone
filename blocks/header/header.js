@@ -5,12 +5,16 @@
 const isDesktop = window.matchMedia('(min-width: 900px)');
 
 /**
- * Fetch the nav fragment. Metadata-independent dual-fetch:
- * /content first (localhost / aem up), then root (DA/EDS production).
+ * Fetch the nav fragment. Metadata-independent dual-fetch, ordered by the
+ * current path so we don't log a 404 for the wrong environment: under /content
+ * (local `aem up`) try /content first; on production (root paths) try / first.
  */
 async function fetchNav() {
-  let resp = await fetch('/content/nav.plain.html');
-  if (!resp.ok) resp = await fetch('/nav.plain.html');
+  const candidates = window.location.pathname.startsWith('/content/')
+    ? ['/content/nav.plain.html', '/nav.plain.html']
+    : ['/nav.plain.html', '/content/nav.plain.html'];
+  let resp = await fetch(candidates[0]);
+  if (!resp.ok) resp = await fetch(candidates[1]);
   if (!resp.ok) return null;
   const html = await resp.text();
   const container = document.createElement('div');
@@ -39,6 +43,7 @@ function buildSearch() {
   input.name = 'q';
   input.placeholder = 'SEARCH';
   input.setAttribute('aria-label', 'Search');
+  input.setAttribute('autocomplete', 'off');
   form.append(input);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -90,8 +95,8 @@ export default async function decorate(block) {
           <h2 class="nav-signin-title">Sign In</h2>
           <p class="nav-signin-welcome">Welcome Back</p>
           <form class="nav-signin-form">
-            <input type="text" name="username" placeholder="USERNAME" aria-label="Username">
-            <input type="password" name="password" placeholder="PASSWORD" aria-label="Password">
+            <input type="text" name="username" placeholder="USERNAME" aria-label="Username" autocomplete="username">
+            <input type="password" name="password" placeholder="PASSWORD" aria-label="Password" autocomplete="current-password">
             <a class="nav-signin-forgot" href="#forgot-password">Forgot your password?</a>
             <button type="submit" class="nav-signin-submit">Sign In</button>
           </form>

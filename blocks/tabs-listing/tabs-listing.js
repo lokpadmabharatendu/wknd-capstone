@@ -41,7 +41,7 @@ function buildCard(entry) {
 
   const imageCell = document.createElement('td');
   if (entry.image) {
-    const pic = createOptimizedPicture(entry.image, entry.title || '', false, [{ width: '750' }]);
+    const pic = createOptimizedPicture(entry.image, entry.title || '', false, [{ media: '(min-width: 600px)', width: '400' }, { width: '750' }]);
     imageCell.append(pic);
   }
 

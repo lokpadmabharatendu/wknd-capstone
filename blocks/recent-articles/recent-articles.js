@@ -46,7 +46,7 @@ function buildCard(entry) {
   const imageDiv = document.createElement('div');
   imageDiv.className = 'recent-articles-card-image';
   if (entry.image) {
-    const pic = createOptimizedPicture(entry.image, entry.title || '', false, [{ width: '750' }]);
+    const pic = createOptimizedPicture(entry.image, entry.title || '', false, [{ media: '(min-width: 600px)', width: '400' }, { width: '750' }]);
     const link = document.createElement('a');
     link.href = entry.path;
     link.append(pic);
